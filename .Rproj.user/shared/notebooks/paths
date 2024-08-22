@@ -9,6 +9,8 @@
 /Users/lzoleon/django_local_library/django_test/locallibrary/catalog/templates/catalog/author_list.html="DCA53FB3"
 /Users/lzoleon/django_local_library/django_test/locallibrary/catalog/templates/catalog/book_detail.html="2257B748"
 /Users/lzoleon/django_local_library/django_test/locallibrary/catalog/templates/catalog/book_list.html="AF1AE803"
+/Users/lzoleon/django_local_library/django_test/locallibrary/catalog/templates/catalog/bookinstance_list_borrowed.html="DC037637"
+/Users/lzoleon/django_local_library/django_test/locallibrary/catalog/templates/catalog/bookinstance_list_borrowed_user.html="888C7FE0"
 /Users/lzoleon/django_local_library/django_test/locallibrary/catalog/templates/index.html="487D76FF"
 /Users/lzoleon/django_local_library/django_test/locallibrary/catalog/urls.py="180DDBC2"
 /Users/lzoleon/django_local_library/django_test/locallibrary/locallibrary/settings.py="E5FF5E56"
