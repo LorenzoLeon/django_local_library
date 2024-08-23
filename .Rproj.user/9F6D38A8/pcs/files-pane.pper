@@ -1,5 +1,5 @@
 {
-    "path": "~/django_local_library/django_test/locallibrary/catalog/templates/catalog",
+    "path": "~/django_local_library/django_test/locallibrary/catalog/static/css",
     "sortOrder": [
         {
             "columnIndex": 2,
