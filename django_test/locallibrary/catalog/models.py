@@ -6,6 +6,7 @@ from django.db.models import UniqueConstraint # Constrains fields to unique valu
 from django.db.models.functions import Lower # Returns lower cased value of field
 from django.conf import settings
 from datetime import date
+import uuid # Required for unique book instances
 
 class Genre(models.Model):
     """Model representing a book genre."""
@@ -95,7 +96,6 @@ class Book(models.Model):
     display_genre.short_description = 'Genre'
 
       
-import uuid # Required for unique book instances
 
 class BookInstance(models.Model):
 
