@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Used in get_absolute_url() to get URL for specified ID
 from django.urls import reverse
 
@@ -52,6 +52,7 @@ class Project(models.Model):
     description = models.TextField(help_text=_("Enter a proyect description"),
                                    null=True,
                                    blank=True)
+    active = models.BooleanField(default=False)
 
     def get_abr(self):
         return [s[0] for s in self.name.split()].join().upper()
@@ -62,7 +63,7 @@ class Project(models.Model):
 
     def get_absolute_url(self):
         """Returns the url to access a particular proyect instance."""
-        return reverse('proyect-detail', args=[str(self.id)])
+        return reverse('project-detail', args=[str(self.get_abr)])
 
     class Meta:
         constraints = [
@@ -72,6 +73,7 @@ class Project(models.Model):
                 violation_error_message=_("Proyect already exists (case insensitive match)")
             ),
         ]
+    
 
 class MapProject(models.Model):
     name = models.CharField(
@@ -108,7 +110,7 @@ class PointsOfInterest(models.Model):
             ),
         ]
 
-class MapPoints(models.Model):
+class PointsInstance(models.Model):
     id = models.UUIDField(primary_key=True, 
                           default=uuid.uuid4,
                           help_text=_("Unique ID for this particular map point across whole library"))
@@ -123,6 +125,9 @@ class Event(models.Model):
     type = models.CharField(max_length=200,
                             unique=True,
                             help_text=_("Enter an Event type here"))
+    def __str__(self):
+        """String for representing the event."""
+        return self.type
     class Meta:
         constraints = [
             UniqueConstraint(
@@ -132,9 +137,12 @@ class Event(models.Model):
             ),
         ]
 
+"""Don't forget LoginRequiredMixin in map event creation view"""
 class MapEvents(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,
                           help_text=_("Unique ID for this particular map point across whole library"))
+    title = models.CharField(unique=True,
+                             help_text=_("Enter an Event link here"))
     type = models.ForeignKey(Event, on_delete=models.RESTRICT)
     project = models.ForeignKey(Project, on_delete=models.RESTRICT)
     map = models.ForeignKey(MapProject, on_delete=models.RESTRICT)
@@ -142,10 +150,17 @@ class MapEvents(models.Model):
     link = models.CharField(unique=True,
                             help_text=_("Enter an Event link here"))
     date = models.DateTimeField(help_text=_("Enter the event's date and time"))
-    location = 
+    created_by = models.ForeignKey(User, on_delete=models.RESTRICT)
+    location = models.IntegerField()
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return self.title
+    
+    def get_absolute_url(self):
+        """Returns the url to access a particular genre instance."""
+        return reverse('event-detail', args=[str(self.id)])
 
 class MapEventImages(models.Model):
     file = models.ImageField()
     mapevent = models.ForeignKey(MapEvents, on_delete=models.RESTRICT)
-
-
