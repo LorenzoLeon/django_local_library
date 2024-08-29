@@ -27,7 +27,7 @@ class ProjectAdmin(admin.ModelAdmin):
                     'land_owners', 'active')
 
     fieldsets = (
-        (None, {'fields': ('name','abr', 'description', 'state','active')}),
+        (None, {'fields': ('name','abr', 'description', 'state','active', 'head_image', 'start_date')}),
         ('CRTs', {'fields': ('credits_issued','credits_sold','money_received')}),
         ('Context',{'fields': ('hectares','land_owners','population')})
     )

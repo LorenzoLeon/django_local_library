@@ -1,0 +1,53 @@
+{% extends "base_generic.html" %}
+{% block title %}
+<title>Event Detail</title>
+{% endblock %}
+{% block sidebar %}
+<li class="nav-item"><a class="nav-link" href="#about">Inicio</a></li>
+<li class="nav-item"><a class="nav-link" href="#eventos">Actividades</a></li>
+<li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
+{% endblock %}
+{% block content %}
+
+<section class="about-section text-center" id="about" style="background:linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.7) 75%, #000 100%),  url({{ project.head_image.url }})">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="text-white mx-auto my-0 text-uppercase">{{project.name}} {{project.abr}}</h1>
+                <h3 class="text-white-50 mx-auto mt-2 mb-5">{{project.state}}</h3>
+                <p class="text-white-50">
+                    {{project.description}}
+                </p>
+                {% load humanize %}
+                <p>Un projecto de {{project.hectares|intcomma}}</p>
+            </div>
+            <!-- <img class="img-fluid" src="{{ project.head_image.url }}" alt="..." /> -->
+        </div>
+    </div>
+</section>
+<!-- flex-wrap d-sm-flex -->
+<section class="contact-section bg-black" id = "eventos">
+    <div class="container px-4 px-lg-5">
+      <h1 class="text-white mx-auto text-uppercase text-center">Actividades y Eventos</h1>
+        <div class="row gx-4 gx-lg-5">
+            {% for mapevent in project.mapevent_set.all %}
+            <div class="col-md-4 mb-3 mb-md-0">
+                <div class="card py-4 h-100">
+                    <div class="card-body text-center">
+                        <h4 class="text-uppercase m-0"><a href="{{ mapevent.get_absolute_url }}">{{mapevent.title}}</a></h4>
+                        <hr class="my-4 mx-auto" />
+                        <div class="small text-black-50">{{mapevent.description}}</div>
+                        <hr class="my-4 mx-auto" />
+                        {% if mapevent.mapeventimage_set.first.file.url %}
+                        <img class="img-fluid sub" src="{{ mapevent.mapeventimage_set.first.file.url }}" alt="..." />
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

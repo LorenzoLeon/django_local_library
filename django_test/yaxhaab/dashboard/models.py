@@ -45,7 +45,8 @@ class Project(models.Model):
     hectares = models.IntegerField(help_text=_("Enter number of hectares in activity area"))
     population = models.IntegerField(help_text=_("Enter community population"))
     land_owners = models.IntegerField(help_text=_("Enter number of land_owners"))
-    
+    start_date = models.DateField(help_text=_("Enter project start date"))
+    head_image = models.ImageField(upload_to='images/',null=True, help_text=_(""))
     description = models.TextField(help_text=_("Enter a proyect description"),
                                    null=True,
                                    blank=True)

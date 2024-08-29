@@ -1,7 +1,12 @@
 {% extends "base_generic.html" %}
+{% block sidebar %}
+<li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
+<li class="nav-item"><a class="nav-link" href="#projectos">Projectos</a></li>
+<li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
+{% endblock %}
 
 {% block content %}
-<header class="masthead">
+<header class="masthead" id="inicio">
   <div class="container px-4 px-lg-5 d-flex h-75 align-items-center justify-content-center">
       <div class="d-flex justify-content-center">
           <div class="text-center">
@@ -12,26 +17,32 @@
       </div>
   </div>
 </header>
-<section class="about-section text-center" id="about">
+{% if project_list %}
+<section class="contact-section bg-black" id ="projectos">
   <div class="container px-4 px-lg-5">
-      <div class="row gx-4 gx-lg-5 justify-content-center">
-          <div class="col-lg-8">
-              <h2 class="text-white mb-4">Listado de proyectos de Yaax Carbon</h2>
+    <h2 class="text-white mb-4 text-center">Listado de proyectos de Yaax Carbon</h2>
+      <div class="row gx-4 gx-lg-5">
+          {% for project in project_list %}
+          <div class="col-md-4 mb-3 mb-md-0">
+              <div class="card py-4 h-100">
+                  <div class="card-body">
+                      <h3 class="text-uppercase m-0  text-center"><a href="{{ project.get_absolute_url }}">{{project.name}}</a></h4>
+                      <hr class="my-4 mx-auto" />
+                      <div class="small text-black-50">{{project.description}}</div>
+                        <hr class="my-4 mx-auto" />
+                      {% if project.mapevent_set.first.mapeventimage_set.first.file.url %}
+                      <img class="img-fluid sub" src="{{ project.mapevent_set.first.mapeventimage_set.first.file.url }}" alt="..." />
+                      {% endif %}
+                  </div>
+              </div>
           </div>
-      </div>{% load static %}
+          {% endfor %}
+      </div>
+      {% load static %}
       <img class="img-fluid" src="{% static 'assets/ipad.png' %}" alt="..." />
   </div>
 </section>
-  <h1>Project List</h1>
-  {% if project_list %}
-    <ul>
-      {% for project in project_list %}
-      <li>
-        <a href="{{ project.get_absolute_url }}">{{ project.name }}, {{ project.abr }}</a>
-      </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>There are no author in the library.</p>
-  {% endif %}
+{% else %}
+<p>There are no events registered.</p>
+{% endif %}
 {% endblock %}

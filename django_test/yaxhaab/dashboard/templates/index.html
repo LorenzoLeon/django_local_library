@@ -15,15 +15,15 @@
         </div>
     </div>
 </header>
-<section class="about-section text-center" id="about">
+<section class="about-section" id="about">
     <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-lg-8">
-                <h2 class="text-white mb-4">Ayúdanos a salvar nuestro futuro</h2>
-                <p class="text-white-50">
+                <h2 class="text-white mb-4  text-center">Ayúdanos a salvar nuestro futuro</h2>
+                <p class="text-white-50">{% load humanize %}
                     Yaax-Carbon ha desarrollado más de {{num_projects}} proyectos y actualmente tenemos {{num_active_projects}} activos.
-                    En conjunto estámos trabajando con una cobertura de más de {{ num_hectares }}. 
-                    Este año, llevamos más de {{num_mapevents}} actividades de conservación, capacitación, talleres, inventario e investigación en nuestras comunidades.
+                    En conjunto estámos trabajando con una cobertura de más de {{ num_hectares|intcomma }} hectarea{{ num_hectares|pluralize}}. 
+                    <br><br>Este año, llevamos más de {{num_mapevents}} actividades de conservación, capacitación, talleres, inventario e investigación en nuestras comunidades.
                 </p>
             </div>
         </div>{% load static %}
@@ -35,11 +35,11 @@
     <div class="container px-4 px-lg-5">
         <!-- Featured Project Row-->
         <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
-            <div class="col-xl-8 col-lg-7"><img class="img-fluid mb-3 mb-lg-0" src="{% static 'assets/bg-masthead.jpg' %}" alt="..." /></div>
+            <div class="col-xl-8 col-lg-7"><a href="{% url 'projects' %}"><img class="img-fluid mb-3 mb-lg-0" src="{% static 'assets/bg-masthead.jpg' %}" alt="..." /></a></div>
             <div class="col-xl-4 col-lg-5">
                 <div class="featured-text text-center text-lg-left">
-                    <h4>Shoreline</h4>
-                    <p class="text-black-50 mb-0">Grayscale is open source and MIT licensed. This means you can use it for any project - even commercial projects! Download it, customize it, and publish your website!</p>
+                    <h4>Explora nuestros proyectos</h4>
+                    <p class="text-black-50 mb-0">Esta es nuestra plataforma de seguimiento de operaciones de conservación en todos nuestros proyectos activos en México.</p>
                 </div>
             </div>
         </div>

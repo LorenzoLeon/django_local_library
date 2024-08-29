@@ -16,6 +16,7 @@ def index(request):
     num_projects = Project.objects.all().count()
     num_mapevents = MapEvent.objects.all().count()
     num_hectares = Project.objects.all().aggregate(Sum("hectares"))
+    num_hectares = round(num_hectares["hectares__sum"], -3)
 
     # Available books (status = 'a')
     num_active_projects = Project.objects.filter(active=True).count()

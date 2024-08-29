@@ -16,7 +16,9 @@
                       <hr class="my-4 mx-auto" />
                       <div class="small text-black-50"><a href="{{ event.project.get_absolute_url }}">{{event.project}}</a></div>
                       <hr class="my-4 mx-auto" />
+                      {% if event.mapeventimage_set.first.file.url %}
                       <img class="img-fluid sub" src="{{ event.mapeventimage_set.first.file.url }}" alt="..." />
+                      {% endif %}
                   </div>
               </div>
           </div>
