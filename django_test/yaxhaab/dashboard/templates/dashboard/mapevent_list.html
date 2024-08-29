@@ -1,0 +1,32 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+{% block title %}
+<title>Event List</title>
+{% endblock %}
+{% if mapevent_list %}
+<section class="contact-section bg-black">
+  <div class="container px-4 px-lg-5">
+      <div class="row gx-4 gx-lg-5">
+          {% for event in mapevent_list %}
+          <div class="col-md-4 mb-3 mb-md-0">
+              <div class="card py-4 h-100">
+                  <div class="card-body text-center">
+                      <h3 class="text-uppercase m-0"><a href="{{ event.get_absolute_url }}">{{event.title}}</a></h4>
+                      <hr class="my-4 mx-auto" />
+                      <div class="small text-black-50"><a href="{{ event.project.get_absolute_url }}">{{event.project}}</a></div>
+                      <hr class="my-4 mx-auto" />
+                      <img class="img-fluid sub" src="{{ event.mapeventimage_set.first.file.url }}" alt="..." />
+                  </div>
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+      {% load static %}
+      <img class="img-fluid" src="{% static 'assets/ipad.png' %}" alt="..." />
+  </div>
+</section>
+{% else %}
+<p>There are no events registered.</p>
+{% endif %}
+{% endblock %}

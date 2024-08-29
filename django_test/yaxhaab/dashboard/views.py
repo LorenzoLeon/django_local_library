@@ -1,17 +1,21 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 
-# Create your views here.
-from .models import Project, MapEvents
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.utils.translation import gettext_lazy as _
+from dashboard.forms import SubscribeNewsletter
 from django.views import generic
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from .models import Project, MapEvent,SubscribedUser
+from django.db.models import Sum
+
+from django.urls import reverse
 
 def index(request):
     """View function for home page of site."""
 
     # Generate counts of some of the main objects
     num_projects = Project.objects.all().count()
-    num_mapevents = MapEvents.objects.all().count()
+    num_mapevents = MapEvent.objects.all().count()
+    num_hectares = Project.objects.all().aggregate(Sum("hectares"))
 
     # Available books (status = 'a')
     num_active_projects = Project.objects.filter(active=True).count()
@@ -26,95 +30,46 @@ def index(request):
         'num_mapevents': num_mapevents,
         'num_active_projects': num_active_projects,
         'num_visits': num_visits,
+        'num_hectares': num_hectares,
     }
 
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
 
 
-
-class BookListView(generic.ListView):
-    model = Book
-    paginate_by = 20
-    
-class BookDetailView(generic.DetailView):
-    model = Book
-    paginate_by = 10
-    
-class AuthorListView(generic.ListView):
-    model = Author
-    paginate_by = 20
-    
-class AuthorDetailView(generic.DetailView):
-    model = Author
-    paginate_by = 10
-
-
-class LoanedBooksByUserListView(LoginRequiredMixin,generic.ListView):
-    """Generic class-based view listing books on loan to current user."""
-    model = BookInstance
-    template_name = 'catalog/bookinstance_list_borrowed_user.html'
-    paginate_by = 10
-
-    def get_queryset(self):
-        return (
-            BookInstance.objects.filter(borrower=self.request.user)
-            .filter(status__exact='o')
-            .order_by('due_back')
-        )
-        
-class LoanedBooksListView(PermissionRequiredMixin,generic.ListView):
-    permission_required = 'catalog.can_mark_returned'
-    """Generic class-based view listing books on loan to all."""
-    model = BookInstance
-    template_name = 'catalog/bookinstance_list_borrowed.html'
-    paginate_by = 10
-
-    def get_queryset(self):
-        return (
-            BookInstance.objects.all().filter(status__exact='o').order_by('due_back')
-        )
-        
-        
-import datetime
-
-from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-
-from catalog.forms import RenewBookForm
-
-@login_required
-@permission_required('catalog.can_mark_returned', raise_exception=True)
-def renew_book_librarian(request, pk):
-    """View function for renewing a specific BookInstance by librarian."""
-    book_instance = get_object_or_404(BookInstance, pk=pk)
-
-    # If this is a POST request then process the Form data
+def subscribe(request):
     if request.method == 'POST':
-
-        # Create a form instance and populate it with data from the request (binding):
-        form = RenewBookForm(request.POST)
-
-        # Check if the form is valid:
+        form = SubscribeNewsletter(request.POST)
         if form.is_valid():
-            # process the data in form.cleaned_data as required (here we just write it to the model due_back field)
-            book_instance.due_back = form.cleaned_data['renewal_date']
-            book_instance.save()
+            semail = form.cleaned_data['new_email']
+            sname = form.cleaned_data['new_email']
+            subscribe_user = SubscribedUser.objects.filter(email=semail).first()
+            if subscribe_user:
+                messages.error(request, _('%(email)s email address is already a subscriber') % {'email': semail})
+            else:
+                subscribe_model_instance = SubscribedUser()
+                subscribe_model_instance.name = sname
+                subscribe_model_instance.email = semail
+                subscribe_model_instance.save()
+                messages.success(request, _('%(email)s email was successfully subscribed to our newsletter!') % {'email': semail})
+        else:
+            messages.error(request, _("You must type legit name and email to subscribe to a Newsletter"))
+        return redirect('{}#signup'.format(reverse('index')))
+    
+class ProjectListView(generic.ListView):
+    model = Project
+    paginate_by = 5
+    
+class ProjectDetailView(generic.DetailView):
+    model = Project
 
-            # redirect to a new URL:
-            return HttpResponseRedirect(reverse('all-borrowed'))
+class EventsUserListView(generic.ListView):
+    model = MapEvent
+    paginate_by = 10
 
-    # If this is a GET (or any other method) create the default form.
-    else:
-        proposed_renewal_date = datetime.date.today() + datetime.timedelta(weeks=3)
-        form = RenewBookForm(initial={'renewal_date': proposed_renewal_date})
+class EventsStaffListView(generic.ListView):
+    model = MapEvent
+    paginate_by = 10
 
-    context = {
-        'form': form,
-        'book_instance': book_instance,
-    }
-
-    return render(request, 'catalog/book_renew_librarian.html', context)
-
+class EventDetailView(generic.DetailView):
+    model = MapEvent

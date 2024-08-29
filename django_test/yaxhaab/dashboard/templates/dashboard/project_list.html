@@ -1,0 +1,37 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<header class="masthead">
+  <div class="container px-4 px-lg-5 d-flex h-75 align-items-center justify-content-center">
+      <div class="d-flex justify-content-center">
+          <div class="text-center">
+              <h1 class="mx-auto my-0 text-uppercase">Yaax Carbon</h1>
+              <h2 class="text-white-50 mx-auto mt-2 mb-5">Plataforma de seguimiento de actividades</h2>
+              <!-- Projects<a class="btn btn-primary" href="#about">listado de proyectos</a>-->
+          </div>
+      </div>
+  </div>
+</header>
+<section class="about-section text-center" id="about">
+  <div class="container px-4 px-lg-5">
+      <div class="row gx-4 gx-lg-5 justify-content-center">
+          <div class="col-lg-8">
+              <h2 class="text-white mb-4">Listado de proyectos de Yaax Carbon</h2>
+          </div>
+      </div>{% load static %}
+      <img class="img-fluid" src="{% static 'assets/ipad.png' %}" alt="..." />
+  </div>
+</section>
+  <h1>Project List</h1>
+  {% if project_list %}
+    <ul>
+      {% for project in project_list %}
+      <li>
+        <a href="{{ project.get_absolute_url }}">{{ project.name }}, {{ project.abr }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>There are no author in the library.</p>
+  {% endif %}
+{% endblock %}

@@ -33,3 +33,11 @@ from django.views.generic import RedirectView
 urlpatterns += [
     path('', RedirectView.as_view(url='dashboard/', permanent=True)),
 ]
+# Use static() to add URL mapping to serve static files during development (only)
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if settings.DEBUG:  # new
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

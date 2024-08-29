@@ -1,0 +1,19 @@
+{% extends "base_generic.html" %}
+{% block title %}
+<title>Hasta Luego</title>
+{% endblock %}
+{% block content %}
+<header class="masthead">
+    <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
+        <div class="d-flex justify-content-center">
+            <div class="text-center">
+                <h1 class="mx-auto my-0 text-uppercase">Yaax Carbon</h1>
+                <h2 class="text-white-50 mx-auto mt-2 mb-5">Plataforma de seguimiento de actividades</h2>
+                <a class="btn btn-primary" href="#about">Conoce más</a>
+            </div>
+        </div>
+    </div>
+</header>
+  <p>Logged out!</p>
+  <a href="{% url 'login'%}">Click here to login again.</a>
+{% endblock %}

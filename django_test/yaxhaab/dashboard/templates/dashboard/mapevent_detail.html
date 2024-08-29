@@ -1,0 +1,51 @@
+{% extends "base_generic.html" %}
+{% block title %}
+<title>Event Detail</title>
+{% endblock %}
+{% block sidebar %}
+<li class="nav-item"><a class="nav-link" href="#about">Mapa</a></li>
+<li class="nav-item"><a class="nav-link" href="#projects">Proyectos</a></li>
+<li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
+{% endblock %}
+{% block content %}
+
+<section class="about-section text-center" id="about">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="text-white mx-auto my-0 text-uppercase">{{mapevent.title}}</h1>
+                <h2 class="text-white-50 mx-auto mt-2 mb-5"><a href="{{ mapevent.project.get_absolute_url}}">{{mapevent.project}}</a></h2>
+                <h3 class="text-white-50 mx-auto mt-2 mb-5">{{mapevent.type}}</h3>
+                <h4 class="text-white mb-4">{{mapevent.date}}</h4>
+                <p class="text-white-50">
+                    {{mapevent.description}}
+                </p>
+                <p>Creado por {{mapevent.created_by.first_name}}</p>
+            </div>
+        </div>
+        <img class="img-fluid" src="{{ mapevent.type.imgbackground.url }}" alt="..." />
+    </div>
+</section>
+<!-- flex-wrap d-sm-flex -->
+<section class="contact-section bg-black">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5">
+            {% for image in mapevent.mapeventimage_set.all %}
+            <div class="col-md-4 mb-3 mb-md-0">
+                <div class="card py-4 h-100">
+                    <div class="card-body">
+                        <h4 class="text-uppercase m-0">{{image.title}}</h4>
+                        <hr class="my-4 mx-auto" />
+                        <div class="small text-black-50">{{image.description}}</div>
+                        <hr class="my-4 mx-auto" />
+                        <img class="img-fluid sub" src="{{ image.file.url }}" alt="..." />
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

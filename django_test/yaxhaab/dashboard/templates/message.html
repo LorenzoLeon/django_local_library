@@ -1,0 +1,10 @@
+<ul class="messages" id="messages" hx-swap-oob="true">
+  {% if messages %}
+      {% for message in messages %}
+      <li {% if message.tags %} class="{{ message.tags }} text-white"{% endif %}
+      _="on click remove me
+      on load wait 2s then add .message-deleting then wait 1s then remove me">
+      {{ message }}
+      </li>
+      {% endfor %}
+  {% endif %}
