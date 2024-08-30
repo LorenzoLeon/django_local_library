@@ -1,32 +1,77 @@
 {% extends "base_generic.html" %}
 {% block title %}
-<title>Event Detail</title>
+<title>Project Detail</title>
 {% endblock %}
 {% block sidebar %}
-<li class="nav-item"><a class="nav-link" href="#about">Inicio</a></li>
-<li class="nav-item"><a class="nav-link" href="#eventos">Actividades</a></li>
+<li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
+<li class="nav-item"><a class="nav-link" href="#mapa">Mapa</a></li>
+<li class="nav-item"><a class="nav-link" href="#actividades">Actividades</a></li>
 <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
 {% endblock %}
 {% block content %}
-
-<section class="about-section text-center" id="about" style="background:linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.7) 75%, #000 100%),  url({{ project.head_image.url }})">
+<!-- Project Introduction -->
+<section class="about-section text-center" id="inicio" style="background:linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.7) 75%, #000 100%),  url({{ project.head_image.url }});background-size: 100% auto; background-repeat: no-repeat;">
     <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-lg-8">
                 <h1 class="text-white mx-auto my-0 text-uppercase">{{project.name}} {{project.abr}}</h1>
-                <h3 class="text-white-50 mx-auto mt-2 mb-5">{{project.state}}</h3>
-                <p class="text-white-50">
+                <h3 class="text-white-50 mx-auto mt-2 mb-5">{{project.state}}</h3>                {% load humanize %}
+
+                <h3 class="text-white text-opacity-75 mx-auto mt-2 mb-5">{{project.hectares|intcomma}} hectárea{{project.hectares|pluralize}} protegidas</h3>
+                <p class="text-white">
                     {{project.description}}
                 </p>
-                {% load humanize %}
-                <p>Un projecto de {{project.hectares|intcomma}}</p>
             </div>
             <!-- <img class="img-fluid" src="{{ project.head_image.url }}" alt="..." /> -->
         </div>
     </div>
 </section>
-<!-- flex-wrap d-sm-flex -->
-<section class="contact-section bg-black" id = "eventos">
+<!-- Mapa -->
+<section class="projects-section" id = "mapa">
+    <h1 class=" mx-auto text-uppercase text-center">Mapa interactivo</h1>
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">   
+            <center>
+                <svg height = "400" width = "640" id="myplot"></svg> 
+            </center>            
+            <div id="trot"></div> 
+            {% load static %}
+            
+            <script  type="module">
+
+                const us = await d3.json("{% static 'assets/us-counties-10m.json' %}");
+                const counties_raw = topojson.feature(us, us.objects.counties);
+                const rate = await d3.csv("{% static 'assets/us-county-unemployment.csv' %}");
+                const map = new Map(rate.map((d) => [d.id, +d.rate]));
+                counties_raw.features.forEach((g) => {
+                    g.properties.unemployment = map.get(g.id);
+                }); 
+                const plot = Plot.plot({
+                    projection: "albers-usa",
+                    color: {
+                        type: "quantile",
+                        n: 9,
+                        label: "Unemployment (%)",
+                        scheme: "blues"
+                    },
+                    marks: [
+                        Plot.geo(counties_raw, {
+                            fill: "unemployment",
+                            title: (d) => `${d.properties.name} ${d.properties.unemployment}%`,
+                            tip: true
+                        })
+                    ]
+                });
+                const div = document.querySelector("#myplot");
+                div.append(plot);
+            </script>
+            
+            </div>
+        </div>
+    </div>
+</section>
+ <!-- List de Eventos -->
+<section class="contact-section bg-black" id = "actividades">
     <div class="container px-4 px-lg-5">
       <h1 class="text-white mx-auto text-uppercase text-center">Actividades y Eventos</h1>
         <div class="row gx-4 gx-lg-5">
@@ -46,8 +91,6 @@
             </div>
             {% endfor %}
         </div>
-
     </div>
 </section>
-
 {% endblock %}
