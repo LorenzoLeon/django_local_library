@@ -9,7 +9,7 @@
 {% endblock %}
 {% block content %}
 
-<section class="about-section text-center" id="about">
+<section class="about-section text-center" id="inicio" style="background:linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.7) 75%, #000 100%),  url({{ mapevent.type.imgbackground.url }});background-size: 100% auto; background-repeat: no-repeat;">
     <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-lg-8">
@@ -23,7 +23,6 @@
                 <p>Creado por {{mapevent.created_by.first_name}}</p>
             </div>
         </div>
-        <img class="img-fluid" src="{{ mapevent.type.imgbackground.url }}" alt="..." />
     </div>
 </section>
 <!-- flex-wrap d-sm-flex -->

@@ -36,7 +36,24 @@
             </center>            
             <div id="trot"></div> 
             {% load static %}
-            
+            <script  type="module">
+
+                const sjc = await d3.json("{% static 'assets/sjc.json' %}");
+                const zonas = topojson.feature(sjc, us.objects.zonas);
+
+                const plot_sjc = Plot.plot({
+                    projection: "identity",
+                    marks: [
+                        Plot.geo(zonas, {
+                            fill: "superficie",
+                            title: (d) => `${d.properties.clase} ${d.properties.superficie}%`,
+                            tip: true
+                        })
+                    ]
+                });
+                const myplotsvg = document.querySelector("#myplot");
+                myplotsvg.append(plot_sjc);
+            </script>
             <script  type="module">
 
                 const us = await d3.json("{% static 'assets/us-counties-10m.json' %}");
