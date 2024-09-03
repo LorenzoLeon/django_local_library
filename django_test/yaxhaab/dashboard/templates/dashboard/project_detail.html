@@ -27,31 +27,53 @@
     </div>
 </section>
 <!-- Mapa -->
-<section class="projects-section" id = "mapa">
-    <h1 class=" mx-auto text-uppercase text-center">Mapa interactivo</h1>
-    <div class="container px-4 px-lg-5">
-        <div class="row gx-4 gx-lg-5 justify-content-center">   
+<section class="projects-section bg-black" id = "mapa">
+   <!-- <h1 class=" mx-auto text-uppercase text-center">Mapa interactivo</h1>-->
+    <!--<div class="container px-4 px-lg-5">-->
+        <!--<div class="row gx-4 gx-lg-5 justify-content-center">     -->
             <center>
-                <svg height = "400" width = "640" id="myplot"></svg> 
-            </center>            
+                <svg height = "750" width = "640" id="myplot2"></svg> 
+            </center>         
             <div id="trot"></div> 
             {% load static %}
             <script  type="module">
 
                 const sjc = await d3.json("{% static 'assets/sjc.json' %}");
-                const zonas = topojson.feature(sjc, us.objects.zonas);
+                const zonas = topojson.feature(sjc, sjc.objects.zonas);
 
                 const plot_sjc = Plot.plot({
-                    projection: "identity",
+                    projection: {
+                        type : "reflect-y",
+                        domain: zonas
+                    },
+                    color: {
+                        domain: ["Agricultura y Ganadería","Bosque Maderable","Bosque Mesófilo","Bosque no Maderable","Reservas y Restauración","Selva Baja","Urbano"],
+                        range: ["#d5a654", "#7B7F33","#3c916c","#2E4521","#33697f","#23544c","#4c2354"]
+                    },
                     marks: [
                         Plot.geo(zonas, {
-                            fill: "superficie",
-                            title: (d) => `${d.properties.clase} ${d.properties.superficie}%`,
-                            tip: true
+                            fill: "clase",
+                            title: (d) => `${d.properties.RODAL}${d.properties.clase}\n${d.properties.superficie} ha`,
+                            tip: false,
+                            stroke: "black",
+                            strokeWidth: 1
                         })
                     ]
                 });
-                const myplotsvg = document.querySelector("#myplot");
+                d3.select(plot_sjc)
+                .selectAll("path")
+                // React when the pointer hovers over the path.
+                .on("pointerenter", function() {
+                    d3.select(plot_sjc).selectAll("path").attr("opacity", 0.5);
+                    d3.select(this).attr("opacity", 1);
+                });
+                // Reset the appearance when the pointer leaves the SVG
+                d3.select(plot_sjc)
+                .on("pointerleave", function() {
+                    d3.select(plot_sjc).selectAll("path").attr("opacity", 1);
+                });
+
+                const myplotsvg = document.querySelector("#myplot2");
                 myplotsvg.append(plot_sjc);
             </script>
             <script  type="module">
@@ -79,18 +101,19 @@
                         })
                     ]
                 });
-                const div = document.querySelector("#myplot");
-                div.append(plot);
+                /*const div = document.querySelector("#myplot");*/
+                /*div.append(plot);*/
             </script>
             
-            </div>
-        </div>
+           <!-- </div>-->
+        <!--</div> -->
     </div>
 </section>
  <!-- List de Eventos -->
 <section class="contact-section bg-black" id = "actividades">
     <div class="container px-4 px-lg-5">
       <h1 class="text-white mx-auto text-uppercase text-center">Actividades y Eventos</h1>
+      <p></p><br>
         <div class="row gx-4 gx-lg-5">
             {% for mapevent in project.mapevent_set.all %}
             <div class="col-md-4 mb-3 mb-md-0">
@@ -107,6 +130,7 @@
                 </div>
             </div>
             {% endfor %}
+            <p></p><br>
         </div>
     </div>
 </section>
