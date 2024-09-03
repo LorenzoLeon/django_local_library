@@ -6,6 +6,8 @@ from dashboard.forms import SubscribeNewsletter
 from django.views import generic
 from .models import Project, MapEvent,SubscribedUser
 from django.db.models import Sum
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 
 from django.urls import reverse
 
@@ -63,11 +65,13 @@ class ProjectListView(generic.ListView):
     
 class ProjectDetailView(generic.DetailView):
     model = Project
-
+    
+@login_required
 class EventsUserListView(generic.ListView):
     model = MapEvent
     paginate_by = 10
 
+@staff_member_required
 class EventsStaffListView(generic.ListView):
     model = MapEvent
     paginate_by = 10
