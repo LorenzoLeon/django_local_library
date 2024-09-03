@@ -66,12 +66,12 @@ class ProjectListView(generic.ListView):
 class ProjectDetailView(generic.DetailView):
     model = Project
     
-@login_required
+#@login_required
 class EventsUserListView(generic.ListView):
     model = MapEvent
     paginate_by = 10
 
-@staff_member_required
+#@staff_member_required
 class EventsStaffListView(generic.ListView):
     model = MapEvent
     paginate_by = 10
