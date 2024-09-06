@@ -35,13 +35,16 @@
     <!--<div class="row gx-4 gx-lg-5 justify-content-center">     -->
     <center>
         <svg height="750" width="640" id="myplot2"></svg>
+        <svg height="250" width="640" id="myplot3"></svg>
     </center>
-    <div id="trot"></div>
     {% load static %}
     <script type="module">
 
         const sjc = await d3.json("{% static 'assets/sjc.json' %}");
         const zonas = topojson.feature(sjc, sjc.objects.zonas);
+        const domain_clases = ["Agricultura y Ganadería", "Bosque Maderable", "Bosque Mesófilo", "Bosque no Maderable", "Reservas y Restauración", "Selva Baja", "Urbano"];
+        const color_clases = ["#d5a654", "#7B7F33", "#3c916c", "#2E4521", "#33697f", "#23544c", "#4c2354"];
+
 
         const plot_sjc = Plot.plot({
             projection: {
@@ -49,34 +52,127 @@
                 domain: zonas
             },
             color: {
-                domain: ["Agricultura y Ganadería", "Bosque Maderable", "Bosque Mesófilo", "Bosque no Maderable", "Reservas y Restauración", "Selva Baja", "Urbano"],
-                range: ["#d5a654", "#7B7F33", "#3c916c", "#2E4521", "#33697f", "#23544c", "#4c2354"]
+                domain: domain_clases,
+                range: color_clases
             },
             marks: [
                 Plot.geo(zonas, {
                     fill: "clase",
-                    title: (d) => `${d.properties.RODAL}${d.properties.clase}\n${d.properties.superficie} ha`,
-                    tip: false,
+                    title: (d) => `${d.properties.RODAL}${d.properties.clase}\n${d3.format(",.2r")(d.properties.superficie)} ha`,
                     stroke: "black",
-                    strokeWidth: 1
+                    tip: false,
+                    strokeWidth: 1,
+                    ariaLabel: "clase",
                 })
             ]
         });
+
+
+        const myplotsvg = document.querySelector("#myplot2");
+        myplotsvg.append(plot_sjc);
+
+        const plot_sjc_together = Plot.plot({
+            color: {
+                domain: domain_clases,
+                range: color_clases
+            },
+            x: { label: "→ Área total (ha)" },
+            y: { label: "" },
+            marginLeft: 200,
+            marginRight: 100,
+            marks: [
+                Plot.barX(
+                    zonas,
+                    Plot.groupY(
+                        {
+                            x: "sum",
+                            title: (d) => `${d3.format(",.2r")(d3.sum(d))} ha`,
+                            ariaLabel: "first",
+                        },
+                        {
+                            fill: "clase",
+                            y: "clase",
+                            x: "superficie",
+                            title: "superficie",
+                            sort: { y: "x" },
+                            ariaLabel: "clase",
+                            tip: false,
+                            stroke: "black"
+                        },
+                    ),
+                ),
+                Plot.text(
+                    zonas,
+                    Plot.groupY(
+                        {
+                            x: "sum",
+                            text: (d) => `${d3.format(",.2r")(d3.sum(d))} ha`
+                        },
+                        {
+                            fill: "white",
+                            y: "clase",
+                            x: "superficie",
+                            text: "superficie",
+                            sort: { y: "x" },
+                            id: "clase",
+                            textanchor: "start",
+                            dx: 30
+                        },
+                    ),
+                ),
+                Plot.ruleX([0]),
+                Plot.axisX({ color: "white" }),
+                Plot.axisY({ color: "white" })
+            ]
+        });
+
+        const myplotsvg_together = document.querySelector("#myplot3");
+        myplotsvg_together.append(plot_sjc_together);
+
         d3.select(plot_sjc)
             .selectAll("path")
             // React when the pointer hovers over the path.
             .on("pointerenter", function () {
-                d3.select(plot_sjc).selectAll("path").attr("opacity", 0.5);
-                d3.select(this).attr("opacity", 1);
+                d3.select(plot_sjc).selectAll("path").attr("opacity", 0.5).attr("stroke", "black");
+                let c = d3.select(this);
+                c.attr("opacity", 1).attr("stroke", "white");
+                d3.select(plot_sjc_together).selectAll("rect").select(function(){
+                    return d3.select(this).attr("aria-label") == c.attr("aria-label") ? null : this;
+                }).attr("opacity", .5).attr("stroke", "black");
+                d3.select(plot_sjc_together).selectAll("rect").select(function(){
+                    return d3.select(this).attr("aria-label") == c.attr("aria-label") ? this : null;
+                }).attr("opacity", 1).attr("stroke", "white");
             });
         // Reset the appearance when the pointer leaves the SVG
         d3.select(plot_sjc)
             .on("pointerleave", function () {
-                d3.select(plot_sjc).selectAll("path").attr("opacity", 1);
+                d3.select(plot_sjc).selectAll("path").attr("opacity", 1).attr("stroke", "black");
+                d3.select(plot_sjc_together).selectAll("rect").attr("opacity", 1).attr("stroke", "black");
             });
 
-        const myplotsvg = document.querySelector("#myplot2");
-        myplotsvg.append(plot_sjc);
+
+        d3.select(plot_sjc_together)
+            .selectAll("rect")
+            // React when the pointer hovers over the path.
+            .on("pointerenter", function () {
+                d3.select(plot_sjc_together).selectAll("rect").attr("opacity", 0.5);
+                let c = d3.select(this);
+                c.attr("opacity", 1).attr("stroke", "white");
+                let title = c.select("title");
+                d3.select(plot_sjc).selectAll("path").select(function(){
+                    return d3.select(this).attr("aria-label") == c.attr("aria-label") ? null : this;
+                }).attr("opacity", .5).attr("stroke", "black");
+                d3.select(plot_sjc).selectAll("path").select(function(){
+                    return d3.select(this).attr("aria-label") == c.attr("aria-label") ? this : null;
+                }).attr("opacity", 1).attr("stroke", "white");
+            });
+        // Reset the appearance when the pointer leaves the SVG
+        d3.select(plot_sjc_together)
+            .on("pointerleave", function () {
+                d3.select(plot_sjc_together).selectAll("rect").attr("opacity", 1).attr("stroke", "black");
+                d3.select(plot_sjc).selectAll("path").attr("opacity", 1).attr("stroke", "black");
+            });
+
     </script>
     <script type="module">
 
@@ -137,74 +233,4 @@
         </div>
     </div>
 </section>
-<div class="card-group scroll">
-    <div class="card">
-        <img src="https://mdbcdn.b-cdn.net/img/new/standard/city/041.webp" class="card-img-top" alt="Hollywood Sign on The Hill" />
-        <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">
-                This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
-            </p>
-        </div>
-        <div class="card-footer">
-            <small class="text-muted">Last updated 3 mins ago</small>
-        </div>
-    </div>
-    <div class="card">
-        <img src="https://mdbcdn.b-cdn.net/img/new/standard/city/042.webp" class="card-img-top" alt="Palm Springs Road" />
-        <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-        </div>
-        <div class="card-footer">
-            <small class="text-muted">Last updated 3 mins ago</small>
-        </div>
-    </div>
-    <div class="card">
-        <img src="https://mdbcdn.b-cdn.net/img/new/standard/city/043.webp" class="card-img-top" alt="Los Angeles Skyscrapers" />
-        <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">
-                This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.
-            </p>
-        </div>
-        <div class="card-footer">
-            <small class="text-muted">Last updated 3 mins ago</small>
-        </div>
-    </div>
-    <div class="card">
-        <img src="https://mdbcdn.b-cdn.net/img/new/standard/city/044.webp" class="card-img-top" alt="Hollywood Sign on The Hill" />
-        <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">
-                This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
-            </p>
-        </div>
-        <div class="card-footer">
-            <small class="text-muted">Last updated 3 mins ago</small>
-        </div>
-    </div>
-    <div class="card">
-        <img src="https://mdbcdn.b-cdn.net/img/new/standard/city/045.webp" class="card-img-top" alt="Palm Springs Road" />
-        <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-        </div>
-        <div class="card-footer">
-            <small class="text-muted">Last updated 3 mins ago</small>
-        </div>
-    </div>
-    <div class="card">
-        <img src="https://mdbcdn.b-cdn.net/img/new/standard/city/046.webp" class="card-img-top" alt="Los Angeles Skyscrapers" />
-        <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">
-                This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.
-            </p>
-        </div>
-        <div class="card-footer">
-            <small class="text-muted">Last updated 3 mins ago</small>
-        </div>
-    </div>
-</div>
 {% endblock %}
