@@ -70,6 +70,7 @@
 
         const myplotsvg = document.querySelector("#myplot2");
         myplotsvg.append(plot_sjc);
+        const total_ha = d3.sum(zonas.features.map((d)=>d.properties.superficie))
 
         const plot_sjc_together = Plot.plot({
             color: {
@@ -106,7 +107,7 @@
                     Plot.groupY(
                         {
                             x: "sum",
-                            text: (d) => `${d3.format(",.2r")(d3.sum(d))} ha`
+                            text: (d) => `${d3.format(",.2r")(d3.sum(d))} ha (${d3.format(".0%")(d3.sum(d)/total_ha)})`
                         },
                         {
                             fill: "white",
@@ -115,8 +116,8 @@
                             text: "superficie",
                             sort: { y: "x" },
                             id: "clase",
-                            textanchor: "start",
-                            dx: 30
+                            textanchor: "end",
+                            dx: 45
                         },
                     ),
                 ),
@@ -135,7 +136,7 @@
             .on("pointerenter", function () {
                 d3.select(plot_sjc).selectAll("path").attr("opacity", 0.5).attr("stroke", "black");
                 let c = d3.select(this);
-                c.attr("opacity", 1).attr("stroke", "white");
+                c.attr("opacity", 1).attr("stroke", "white").raise();
                 d3.select(plot_sjc_together).selectAll("rect").select(function(){
                     return d3.select(this).attr("aria-label") == c.attr("aria-label") ? null : this;
                 }).attr("opacity", .5).attr("stroke", "black");
@@ -164,7 +165,7 @@
                 }).attr("opacity", .5).attr("stroke", "black");
                 d3.select(plot_sjc).selectAll("path").select(function(){
                     return d3.select(this).attr("aria-label") == c.attr("aria-label") ? this : null;
-                }).attr("opacity", 1).attr("stroke", "white");
+                }).attr("opacity", 1).attr("stroke", "white").raise();
             });
         // Reset the appearance when the pointer leaves the SVG
         d3.select(plot_sjc_together)

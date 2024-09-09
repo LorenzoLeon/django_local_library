@@ -1,5 +1,6 @@
 sf_san <- sf::read_sf("~/Downloads/Shp_SnJeCoatlan_PMF_2019_/Shp_SnJeCoatlan_PMF_2019_.shp")
-sf_use_s2(F)
+sf_san <- sf::read_sf("~/Library/CloudStorage/GoogleDrive-lrobles@yaaxcarbon.com/My Drive/YAAX CARBON/3. Oaxaca/Oaxaca Sierra Sur/3. SAN AGUSTÍN MIXTEPEC/1.Programa de Manejo Forestal/Shapes PMF_SnAgustinMixtepec/AA-2_PMF_Producción_SS-SnAgustínMixtepec_V1.shp")
+sf_use_s2(F)sf_use_s2(F)sf_use_s2(F)
 temp <- sf_san %>% 
   mutate(clase = case_when(
     TV == "Selva Baja Subcaducifolia" ~"Selva Baja",
@@ -30,12 +31,13 @@ temp <- sf_san %>%
   mutate(geometry = sf::st_union(geometry,by_feature = T))
 
 library(tmap)
+library(sf)
 tmap_options(check.and.fix = TRUE) 
-sf_use_s2(F)
+sf_use_s2(T)
 temp %>% st_crs()
-temp %>% 
+sf_san %>% 
   mutate(geometry = st_simplify(st_transform(geometry, "EPSG:4087"),dTolerance = 100)) %>% 
- tm_shape() + tm_polygons(col = "clase")
+ tm_shape() + tm_polygons(col = "Areas_Acti")
 
 
 temp_casted <- temp %>%
