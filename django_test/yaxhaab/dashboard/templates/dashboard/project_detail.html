@@ -1,4 +1,5 @@
 {% extends "base_generic.html" %}
+{% load unicorn %}
 {% block title %}
 <title>Project Detail</title>
 {% endblock %}
@@ -209,29 +210,7 @@
     </div>
 </section>
 <!-- List de Eventos -->
-<section class="contact-section bg-black" id="actividades">
-    <div class="container px-4 px-lg-5">
-        <h1 class="text-white mx-auto text-uppercase text-center">Actividades y Eventos</h1>
-        <p></p><br>
-        <div class="row gx-4 gx-lg-5 card-group card-group-scroll">
-            {% for mapevent in project.mapevent_set.all %}
-            <div class="col-md-4 mb-3 mb-md-0">
-                <div class="card px-4">
-                    <img class="card-img-top" src="{{ mapevent.mapeventimage_set.first.file.url }}" alt="..." />
-                    <div class="card-body text-center">
-                        <h4 class="text-uppercase m-0"><a href="{{ mapevent.get_absolute_url }}">{{mapevent.title}}</a>
-                        </h4>
-                        <hr class="my-4 mx-auto" />
-                        <div class="small text-black-50">{{mapevent.description}}</div>
-                        <hr class="my-4 mx-auto" />
-                        {% if mapevent.mapeventimage_set.first.file.url %}
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-            <p></p><br>
-        </div>
-    </div>
-</section>
+{% unicorn_scripts %}
+{% unicorn 'proyectMapeventListReactive' projectpk=project.id %}
+
 {% endblock %}

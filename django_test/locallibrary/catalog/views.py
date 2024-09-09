@@ -69,7 +69,7 @@ class LoanedBooksByUserListView(LoginRequiredMixin,generic.ListView):
         return (
             BookInstance.objects.filter(borrower=self.request.user)
             .filter(status__exact='o')
-            .order_by('due_back')
+            .order_by('date')
         )
         
 class LoanedBooksListView(PermissionRequiredMixin,generic.ListView):

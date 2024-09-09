@@ -4,10 +4,10 @@ from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from dashboard.forms import SubscribeNewsletter
 from django.views import generic
-from .models import Project, MapEvent,SubscribedUser
 from django.db.models import Sum
-from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
+from .models import Project, MapEvent,SubscribedUser
+
 
 from django.urls import reverse
 
@@ -66,15 +66,20 @@ class ProjectListView(generic.ListView):
 class ProjectDetailView(generic.DetailView):
     model = Project
     
-#@login_required
-class EventsUserListView(generic.ListView):
+class EventsUserListView(LoginRequiredMixin,generic.ListView):
     model = MapEvent
-    paginate_by = 10
+    login_url = "/dashboard/accounts/login"
+    def get_queryset(self):
+        return (
+            MapEvent.objects.filter(created_by=self.request.user)
+            .order_by('date')
+        )
 
 #@staff_member_required
-class EventsStaffListView(generic.ListView):
+class EventsStaffListView(PermissionRequiredMixin,generic.ListView):
+    permission_required = 'dashboard.can_mark_approved'
+    login_url = "/dashboard/accounts/login"
     model = MapEvent
-    paginate_by = 10
 
 class EventDetailView(generic.DetailView):
     model = MapEvent

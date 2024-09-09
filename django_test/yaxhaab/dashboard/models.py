@@ -148,12 +148,13 @@ class MapEvent(models.Model):
     project = models.ForeignKey(Project, on_delete=models.RESTRICT)
     description = models.TextField(help_text=_("Enter an event description"), null=True, blank=True)
     link = models.CharField(max_length=200,
-                            unique=True,
+                            unique=True,null=True,blank=True,
                             help_text=_("Enter an Event link here"))
     date = models.DateTimeField(help_text=_("Enter the event's date and time"))
     created_by = models.ForeignKey(User, on_delete=models.RESTRICT)
     loc_x = models.FloatField()
     loc_y = models.FloatField()
+    approved_by_staff = models.BooleanField(default=False)
 
     def __str__(self):
         """String for representing the Model object."""
@@ -162,13 +163,17 @@ class MapEvent(models.Model):
     def get_absolute_url(self):
         """Returns the url to access a particular genre instance."""
         return reverse('event-detail', args=[str(self.id)])
+        
+    class Meta:
+        ordering = ['date']
+        permissions = (("can_mark_approved", "Set event as approved"),)
 
 class MapEventImage(models.Model):
     title = models.CharField(max_length=200,
                              help_text=_("Enter an image title here"))
     description = models.TextField(help_text=_("Enter an image description here"))
     file = models.ImageField()
-    mapevent = models.ForeignKey(MapEvent, on_delete=models.RESTRICT)
+    mapevent = models.ForeignKey(MapEvent, on_delete=models.CASCADE)
 
 from django.utils import timezone
 
