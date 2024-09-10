@@ -4,15 +4,15 @@
         <p></p><br>
         <!--<input unicorn:model="initdate" type="datetime-local" id="initdate" />
         <input unicorn:model="enddate" type="datetime-local" id="enddate" /><br>-->
-        <div id="my-numeric-slider" class="form-group numeric-slider"
-            data-range_min="{{ initdate|date:'c' }}"
-            data-range_max="{{ enddate|date:'c' }}"
-            data-cur_min="{{ initdate|date:'c' }}"
-            data-cur_max="{{ enddate|date:'c' }}">
+        <div id="my-numeric-slider" class="form-group numeric-slider">
+            <div id='my-numeric-slider_range_min' data-range_min="{{ project.mapevent_set.earliest.date|date:'c' }}"></div>
+            <div id='my-numeric-slider_range_max' data-range_max="{{ project.mapevent_set.latest.date|date:'c' }}"></div>
+            <span id='my-numeric-slider_cur_min'>{{ initdate|date:'c' }}</span> - 
+            <span id='my-numeric-slider_cur_max'>{{ enddate|date:'c' }}</span>
             <div class="numeric-slider-range ui-slider ui-slider-horizontal ui-slider-range"></div>
             <span class="numeric-slider-range_text text-white" id='my-numeric-slider_text'>[Lower Value] - [Upper Value]</span>
-            <input unicorn:model="initdate" type='hidden' unicorn:key="slider_min" id='my-numeric-slider_min' name='slider-min' value = "{{ initdate|date:'c' }}" />
-            <input unicorn:model="enddate" type='hidden' unicorn:key="slider_max" id='my-numeric-slider_max' name='slider-max' value = "{{ enddate|date:'c' }}"/>
+            <input unicorn:model="initdate" type='hidden' unicorn:key="slider_min" id='my-numeric-slider_min' name='slider-min' value = "{{ initdate|date:'c' }}" unicorn:partial.id="my-numeric-slider_cur_min"/>
+            <input unicorn:model="enddate" type='hidden' unicorn:key="slider_max" id='my-numeric-slider_max' name='slider-max' value = "{{ enddate|date:'c' }}" unicorn:partial.id="my-numeric-slider_cur_max"/>
         </div>
 
         <div class="row gx-4 gx-lg-5 card-group ">

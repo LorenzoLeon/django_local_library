@@ -31,9 +31,7 @@
 </section>
 <!-- Mapa -->
 <section class="projects-section bg-black" id="mapa">
-    <!-- <h1 class=" mx-auto text-uppercase text-center">Mapa interactivo</h1>-->
-    <!--<div class="container px-4 px-lg-5">-->
-    <!--<div class="row gx-4 gx-lg-5 justify-content-center">     -->
+
     <center>
         <svg height="750" width="640" id="myplot2"></svg>
         <svg height="250" width="640" id="myplot3"></svg>
@@ -71,7 +69,7 @@
 
         const myplotsvg = document.querySelector("#myplot2");
         myplotsvg.append(plot_sjc);
-        const total_ha = d3.sum(zonas.features.map((d)=>d.properties.superficie))
+        const total_ha = d3.sum(zonas.features.map((d) => d.properties.superficie))
 
         const plot_sjc_together = Plot.plot({
             color: {
@@ -108,7 +106,7 @@
                     Plot.groupY(
                         {
                             x: "sum",
-                            text: (d) => `${d3.format(",.2r")(d3.sum(d))} ha (${d3.format(".0%")(d3.sum(d)/total_ha)})`
+                            text: (d) => `${d3.format(",.2r")(d3.sum(d))} ha (${d3.format(".0%")(d3.sum(d) / total_ha)})`
                         },
                         {
                             fill: "white",
@@ -138,10 +136,10 @@
                 d3.select(plot_sjc).selectAll("path").attr("opacity", 0.5).attr("stroke", "black");
                 let c = d3.select(this);
                 c.attr("opacity", 1).attr("stroke", "white").raise();
-                d3.select(plot_sjc_together).selectAll("rect").select(function(){
+                d3.select(plot_sjc_together).selectAll("rect").select(function () {
                     return d3.select(this).attr("aria-label") == c.attr("aria-label") ? null : this;
                 }).attr("opacity", .5).attr("stroke", "black");
-                d3.select(plot_sjc_together).selectAll("rect").select(function(){
+                d3.select(plot_sjc_together).selectAll("rect").select(function () {
                     return d3.select(this).attr("aria-label") == c.attr("aria-label") ? this : null;
                 }).attr("opacity", 1).attr("stroke", "white");
             });
@@ -161,10 +159,10 @@
                 let c = d3.select(this);
                 c.attr("opacity", 1).attr("stroke", "white");
                 let title = c.select("title");
-                d3.select(plot_sjc).selectAll("path").select(function(){
+                d3.select(plot_sjc).selectAll("path").select(function () {
                     return d3.select(this).attr("aria-label") == c.attr("aria-label") ? null : this;
                 }).attr("opacity", .5).attr("stroke", "black");
-                d3.select(plot_sjc).selectAll("path").select(function(){
+                d3.select(plot_sjc).selectAll("path").select(function () {
                     return d3.select(this).attr("aria-label") == c.attr("aria-label") ? this : null;
                 }).attr("opacity", 1).attr("stroke", "white").raise();
             });
@@ -205,10 +203,49 @@
         /*div.append(plot);*/
     </script>
 
-    <!-- </div>-->
-    <!--</div> -->
-    </div>
 </section>
+<section class="projects-section bg-black" id="carousel">
+
+<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+      <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+      <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+      <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner" role="listbox">
+      <!-- Slide One - Set the background image for this slide in the line below -->
+      <div class="carousel-item active" style="background-image: url('{{ project.head_image.url}}')">
+        <div class="carousel-caption d-none d-md-block">
+          <h2 class="display-4">First Slide</h2>
+          <p class="lead">This is a description for the first slide.</p>
+        </div>
+      </div>
+      <!-- Slide Two - Set the background image for this slide in the line below -->
+      <div class="carousel-item" style="background-image: url('https://4.bp.blogspot.com/-InDD3Hm_bhU/XB4_TK3TT7I/AAAAAAAAAJ4/r5tUeCOqq1MTchFh7D7pWdf582A4qYIIwCEwYBhgL/s1600/Businesswoman-working-at-a-computer-1280x720.jpg')">
+        <div class="carousel-caption d-none d-md-block">
+          <h2 class="display-4">Second Slide</h2>
+          <p class="lead">This is a description for the second slide.</p>
+        </div>
+      </div>
+      <!-- Slide Three - Set the background image for this slide in the line below -->
+      <div class="carousel-item" style="background-image: url('https://1.bp.blogspot.com/-GWl5F8P4t-8/XB4_VV4VE5I/AAAAAAAAAKE/SmHRzas-LpMpDBoLn6otR9AznVsr6L7OgCEwYBhgL/s1600/t1larg.africa.cnn.jpg')">
+        <div class="carousel-caption d-none d-md-block">
+          <h2 class="display-4">Third Slide</h2>
+          <p class="lead">This is a description for the third slide.</p>
+        </div>
+      </div>
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+  </div>
+</section>
+
 <!-- List de Eventos -->
 {% unicorn_scripts %}
 {% unicorn 'proyectMapeventListReactive' projectpk=project.id %}

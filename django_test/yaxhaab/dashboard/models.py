@@ -167,6 +167,7 @@ class MapEvent(models.Model):
     class Meta:
         ordering = ['date']
         permissions = (("can_mark_approved", "Set event as approved"),)
+        get_latest_by = 'date'
 
 class MapEventImage(models.Model):
     title = models.CharField(max_length=200,
