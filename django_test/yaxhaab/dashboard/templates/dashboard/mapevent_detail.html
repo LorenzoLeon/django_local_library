@@ -21,6 +21,7 @@
                     {{mapevent.description}}
                 </p>
                 <p>Creado por {{mapevent.created_by.first_name}}</p>
+                <button class="btn btn-primary" type="button" onclick="location.href='{% url 'event-update' pk=mapevent.id%}'">Editar Evento!</button>
             </div>
         </div>
     </div>

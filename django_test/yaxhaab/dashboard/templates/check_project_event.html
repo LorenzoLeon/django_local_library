@@ -177,39 +177,29 @@
             });
 
     </script>
-    <script type="module">
+</section>
+<!--Map2-->
+<section class="projects-section bg-black" id="mapa2"></section>
 
-        const us = await d3.json("{% static 'assets/us-counties-10m.json' %}");
-        const counties_raw = topojson.feature(us, us.objects.counties);
-        const rate = await d3.csv("{% static 'assets/us-county-unemployment.csv' %}");
-        const map = new Map(rate.map((d) => [d.id, +d.rate]));
-        counties_raw.features.forEach((g) => {
-            g.properties.unemployment = map.get(g.id);
-        });
-        const plot = Plot.plot({
-            projection: "albers-usa",
-            color: {
-                type: "quantile",
-                n: 9,
-                label: "Unemployment (%)",
-                scheme: "blues"
-            },
-            marks: [
-                Plot.geo(counties_raw, {
-                    fill: "unemployment",
-                    title: (d) => `${d.properties.name} ${d.properties.unemployment}%`,
-                    tip: true
-                })
-            ]
-        });
-        /*const div = document.querySelector("#myplot");*/
-        /*div.append(plot);*/
-    </script>
+<center>
+    <svg height="551" width="460" id="myplot_image"></svg>
+    <button class="w3-btn w3-blue w3-round" onclick="getLocation()">Try It</button>
+    <p id="demo"></p>
+</center>
+{% load static %}
+<script type="module">
+    d3.select("#myplot_image").append("svg:image")
+        .attr("xlink:href", "{% static 'assets/sanjeronimo.svg' %}")
+        .attr("width", 460)
+        .attr("height", 551)
+        .attr("class", "graph-svg-component");
+</script>
+
 
 </section>
 <!-- List de Eventos -->
 <section class="contact-section bg-black" id="actividades">
-    <div class="container px-4 px-lg-5">
+    <div class="container text-white px-4 px-lg-5">
         <h1 class="text-white mx-auto text-uppercase text-center">Actividades y Eventos de {{project.name}}</h1>
         <p></p><br>
         <!--<input unicorn:model="initdate" type="datetime-local" id="initdate" />
@@ -217,7 +207,7 @@
         <form method="post" id="datesubmit">
             {% csrf_token %}
             {{ event_date_form }}
-            <input type="submit" name="submit" value="Submit" />
+            <input type="submit" name="submit" value="Filter" />
         </form>
 
         <div class="row gx-4 gx-lg-5 card-group slider" id="slider">
@@ -234,7 +224,7 @@
                         {% if mapevent.mapeventimage_set.first.file.url %}
                         <img class="card-img-top" src="{{ mapevent.mapeventimage_set.first.file.url }}" alt="..." />
                         {% endif %}
-                        <div class="small text-black-50">{{mapevent.date|date:"M j, Y h:i:s"}}</div>
+                        <div class="small text-black-50">{{mapevent.date|date:"M j, Y"}}</div>
                     </div>
                 </div>
                 <br>
@@ -265,18 +255,18 @@
 
 {% block javascript %}
 <script>
-    $(function () {        
+    $(function () {
         $('#datesubmit').on('submit', function (event) {
             event.preventDefault();
             const csrf = datesubmit.elements["csrfmiddlewaretoken"].value
             const formData = {
                 csrfmiddlewaretoken: csrf,
-                mindate_year: datesubmit.elements["mindate_year"].value,
-                mindate_month: datesubmit.elements["mindate_month"].value,
-                mindate_day: datesubmit.elements["mindate_day"].value,
-                maxdate_year: datesubmit.elements["maxdate_year"].value,
-                maxdate_month: datesubmit.elements["maxdate_month"].value,
-                maxdate_day: datesubmit.elements["maxdate_day"].value
+                start_date_year: datesubmit.elements["start_date_year"].value,
+                start_date_month: datesubmit.elements["start_date_month"].value,
+                start_date_day: datesubmit.elements["start_date_day"].value,
+                end_date_year: datesubmit.elements["end_date_year"].value,
+                end_date_month: datesubmit.elements["end_date_month"].value,
+                end_date_day: datesubmit.elements["end_date_day"].value
             };
             $.ajax({
                 url: "{% url 'project-detail2' pk=project.id %}",
@@ -291,7 +281,7 @@
                     const eventList = $("#slider");
                     eventList.empty();
                     for (var event of response.events) {
-                        const rupi = event.get_image == "" ? "" : `<img class="card-img-top" src="${ event.get_image }" alt="..." />`;
+                        const rupi = event.get_image == "" ? "" : `<img class="card-img-top" src="${event.get_image}" alt="..." />`;
                         const eventHTMLElement = `
                         <div class="col-md-4 mb-3 mb-md-0">
                             <div class="card px-4">
@@ -316,5 +306,19 @@
             });
         });
     });
+    const x = document.getElementById("demo");
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+function showPosition(position) {
+    x.innerHTML = "Latitude: " + position.coords.latitude +
+        "<br>Longitude: " + position.coords.longitude;
+}
 </script>
 {% endblock %}

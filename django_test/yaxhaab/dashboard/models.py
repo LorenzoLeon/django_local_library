@@ -150,7 +150,7 @@ class MapEvent(models.Model):
     link = models.CharField(max_length=200,
                             unique=True,null=True,blank=True,
                             help_text=_("Enter an Event link here"))
-    date = models.DateTimeField(help_text=_("Enter the event's date and time"))
+    date = models.DateField(help_text=_("Enter the event's date"))
     created_by = models.ForeignKey(User, on_delete=models.RESTRICT)
     loc_x = models.FloatField()
     loc_y = models.FloatField()
@@ -167,7 +167,7 @@ class MapEvent(models.Model):
             'id': self.id, 
             'title': self.title, 
             'description': self.description,
-            'date': self.date.strftime("%b %d, %Y  %X"),
+            'date': self.date.strftime("%b %d, %Y"),
             'get_absolute_url': self.get_absolute_url(),
             'get_image': fil_ur,
         }

@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render,redirect
 
 from django.contrib import messages
@@ -5,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from dashboard.forms import SubscribeNewsletter
 from django.contrib.auth.models import User
 from django.views import generic
+from django.views.generic import ListView, DetailView, UpdateView
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.forms import modelformset_factory
@@ -12,7 +15,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
 from django.shortcuts import get_object_or_404
 
-from .models import Project, MapEvent,SubscribedUser,MapEventImage,MapEventSerializer
+from .models import Project, MapEvent,SubscribedUser,MapEventImage
 from .forms import MapEventForm,EventDateForm
 
 from django.urls import reverse
@@ -65,14 +68,14 @@ def subscribe(request):
             messages.error(request, _("You must type legit name and email to subscribe to a Newsletter"))
         return redirect('{}#signup'.format(reverse('index')))
     
-class ProjectListView(generic.ListView):
+class ProjectListView(ListView):
     model = Project
     paginate_by = 5
     
-class ProjectDetailView(generic.DetailView):
+class ProjectDetailView(DetailView):
     model = Project
     
-class EventsUserListView(LoginRequiredMixin,generic.ListView):
+class EventsUserListView(LoginRequiredMixin,ListView):
     model = MapEvent
     login_url = "/dashboard/accounts/login"
     def get_queryset(self):
@@ -82,42 +85,46 @@ class EventsUserListView(LoginRequiredMixin,generic.ListView):
         )
 
 #@staff_member_required
-class EventsStaffListView(PermissionRequiredMixin,generic.ListView):
+class EventsStaffListView(PermissionRequiredMixin,ListView):
     permission_required = 'dashboard.can_mark_approved'
     login_url = "/dashboard/accounts/login"
     model = MapEvent
 
-class EventDetailView(generic.DetailView):
+class EventDetailView(DetailView):
     model = MapEvent
 
-import datetime
 
 @login_required
 def create_event_user(request, pk):
     project = get_object_or_404(Project, pk=pk)
-    image_form_set = modelformset_factory(MapEventImage,exclude=['created_by','mapevent' ], extra=2)
+    image_form_set = modelformset_factory(MapEventImage,exclude=['mapevent'], extra=3)
 
     if request.method == 'POST':
 
         event_form = MapEventForm(request.POST)
-        event_form.project = project
-        formset = image_form_set(request.POST, request.FILES,
-                               queryset=MapEventImage.objects.none())
+        formset = image_form_set(request.POST, request.FILES,queryset=MapEventImage.objects.none())
 
-
-        if event_form.is_valid() and formset.is_valid():
+        if event_form.is_valid():
             event = event_form.save(commit=False)
-            event.created_by = User.objects.get(user = request.user)
-            event.save()
-
-            for form in formset.cleaned_data:
-                image = form['image']
-                photo = MapEventImage(mapevent=event, file=image)
-                photo.save()
-            messages.success(request,"Posted!")
-            return redirect(event.get_absolute_url())
+            event.project = project
+            creator = User.objects.get(username = request.user)
+            event.created_by = creator
+            if formset.is_valid():
+                event.save()
+                images = formset.save(commit=False)
+                for image in images:
+                    image.mapevent = event
+                    image.save()
+                print("Success")
+                messages.success(request,_("New Event Posted!"))
+                return redirect(event.get_absolute_url())
+            else:
+                messages.error(request, formset.errors)
+                formset = image_form_set(queryset=MapEventImage.objects.none())
         else:
-            print( event_form.errors, formset.errors)
+            print("event_form errors")
+            print(event_form.errors)
+            messages.error(request, event_form.errors)
     else:
         event_form = MapEventForm(initial={'date':datetime.date.today()})
         formset = image_form_set(queryset=MapEventImage.objects.none())
@@ -130,6 +137,27 @@ def create_event_user(request, pk):
     return render(request,'create_event.html',context)
 
 
+def event_update(request, pk):
+    event = get_object_or_404(MapEvent, pk=pk)
+    event_form = MapEventForm(event)
+    if False:
+        return redirect(event.get_absolute_url())
+    context={
+        'event': event,
+        'event_form': event_form,
+    }
+    return render(request, 'event_update.html', context)
+
+
+class MapEventUpdateView(PermissionRequiredMixin,UpdateView):
+    permission_required = 'dashboard.can_mark_approved'
+    model = MapEvent
+    success_msg = "Event updated!"
+    fields = ['title','type','description','link','date','loc_x','loc_y']
+    def form_valid(self, form):
+        messages.info(self.request, self.success_msg)
+        return super().form_valid(form)
+
 def checkProject(request, pk):
     project = get_object_or_404(Project, pk=pk)
     events = MapEvent.objects.filter(project = project)
@@ -139,8 +167,8 @@ def checkProject(request, pk):
     if request.method == 'POST':
         event_date_form = EventDateForm(request.POST)
         if event_date_form.is_valid():
-            mindate = event_date_form.cleaned_data['mindate']
-            maxdate = event_date_form.cleaned_data['maxdate']
+            mindate = event_date_form.cleaned_data['start_date']
+            maxdate = event_date_form.cleaned_data['end_date']
             events = MapEvent.objects.filter(project = project).filter(date__range=[mindate, maxdate])
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 #AJAX Request
@@ -150,7 +178,7 @@ def checkProject(request, pk):
         else:
             print(event_date_form.errors)
     else:
-        event_date_form = EventDateForm(initial={'mindate':mindate,'maxdate':maxdate})
+        event_date_form = EventDateForm(initial={'start_date':mindate,'end_date':maxdate})
     context={
         'project': project,
         'event_date_form': event_date_form,

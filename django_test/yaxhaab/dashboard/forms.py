@@ -15,5 +15,5 @@ class MapEventForm(ModelForm):
         exclude= ['created_by', 'approved_by_staff','project']
 
 class EventDateForm(forms.Form):
-    mindate = forms.DateTimeField(widget=forms.SelectDateWidget)
-    maxdate = forms.DateTimeField(widget=forms.SelectDateWidget)
+    start_date = forms.DateField(widget=forms.SelectDateWidget)
+    end_date = forms.DateField(widget=forms.SelectDateWidget)

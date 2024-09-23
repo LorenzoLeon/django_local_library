@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block title %}
-<title>Crear un Nuevo Evento</title>
+<title>Editar un Nuevo Evento</title>
 {% endblock %}
 {% block sidebar %}
 <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Inicio</a></li>
@@ -12,15 +12,15 @@
   <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
     <div class="d-flex justify-content-center">
       <div class="text-center">
-        <h2>Agrega Evento para proyecto:</h2>
-        <h1 class="mx-auto my-0 text-uppercase">{{project.abr}}</h1>
+        <h2>Editar el evento:</h2>
+        <h1 class="mx-auto my-0 text-uppercase">{{event.title}}</h1>
       </div>
     </div>
   </div>
 </header>
 <section class="contact-section bg-black text-white" id="about">
   <div class="container px-4 px-lg-5 ">
-    <h2 class="text-white text-uppercase">Add an Event</h2>
+    <h2 class="text-white text-uppercase">Edit an Event</h2>
     {% if form.errors %}
     <h2 class="text-white mb-5">
       <p>Error in your form</p>
@@ -33,25 +33,9 @@
         {{ hidden }}
       {% endfor %}
       <table>
-        {{ event_form }}
+        {{ form }}
       </table>
-      <button class="w3-btn w3-blue w3-round"  type="button"  onclick="getLocation()">Get Location</button>
-      <br>
-      {{ formset.management_form }}
-      <div class="row gx-4 gx-lg-5  card-group text-black ">
-        {%for imageform in formset%}
-        <div class="col-md-4 mb-3 mb-md-0">
-          <div class="card px-4">
-            <div class="card-body">
-              <h3>Agrega Imagen</h3>
-              <table>
-                {{ imageform }}
-              </table>
-            </div>
-          </div>
-        </div>
-        {%endfor%}
-      </div>
+      <button class="w3-btn w3-blue w3-round" type="button" onclick="getLocation()">Get Location</button>
       <input class="btn btn-primary" type="submit" value="Submit">
     </form>
   </div>
