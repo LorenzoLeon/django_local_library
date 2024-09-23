@@ -156,6 +156,22 @@ class MapEvent(models.Model):
     loc_y = models.FloatField()
     approved_by_staff = models.BooleanField(default=False)
 
+    def as_dict(self):
+        fil_ur = self.mapeventimage_set.first()
+
+        if fil_ur:
+            fil_ur = fil_ur.file.url
+        else:
+            fil_ur = ""
+        return{
+            'id': self.id, 
+            'title': self.title, 
+            'description': self.description,
+            'date': self.date.strftime("%b %d, %Y  %X"),
+            'get_absolute_url': self.get_absolute_url(),
+            'get_image': fil_ur,
+        }
+
     def __str__(self):
         """String for representing the Model object."""
         return self.title
@@ -170,9 +186,6 @@ class MapEvent(models.Model):
         get_latest_by = 'date'
 
 class MapEventImage(models.Model):
-    title = models.CharField(max_length=200,
-                             help_text=_("Enter an image title here"))
-    description = models.TextField(help_text=_("Enter an image description here"))
     file = models.ImageField()
     mapevent = models.ForeignKey(MapEvent, on_delete=models.CASCADE)
 
@@ -185,3 +198,10 @@ class SubscribedUser(models.Model):
     
     def __str__(self):
         return self.email
+    
+from rest_framework import serializers
+
+class MapEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MapEvent
+        fields = ['id', 'title', 'description', 'date']

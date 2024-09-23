@@ -1,0 +1,54 @@
+{% extends "base_generic.html" %}
+
+{% block title %}
+<title>Bienvenido</title>
+{% endblock %}
+{% block sidebar %}
+<li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Inicio</a></li>
+<li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
+{% endblock %}
+{% block content %}
+<header class="masthead">
+  <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
+    <div class="d-flex justify-content-center">
+      <div class="text-center">
+        <h2>Agrega Evento para proyecto:</h2>
+        <h1 class="mx-auto my-0 text-uppercase">{{project.abr}}</h1>
+      </div>
+    </div>
+  </div>
+</header>
+<section class="contact-section bg-black text-white" id="about">
+  <div class="container px-4 px-lg-5 ">
+    <h2 class="text-white text-uppercase">Add an Event</h2>
+    {% if form.errors %}
+    <h2 class="text-white mb-5">
+      <p>Error in your form</p>
+    </h2>
+    {% endif %}
+
+    <form id="post_form" method="post" action="" enctype="multipart/form-data">
+      {% csrf_token %}
+      <table>
+        {{ event_form }}
+      </table>
+      <br>
+      <div class="row gx-4 gx-lg-5  card-group text-black ">
+      {%for imageform in formset%}
+      <div class="col-md-4 mb-3 mb-md-0">
+          <div class="card px-4">
+            <div class="card-body">
+              <h3>Agrega Imagen</h3>
+              <table>
+                {{ imageform }}
+              </table>
+            </div>
+          </div>
+        </div>
+          {%endfor%}
+        </div>
+          <input class="btn btn-primary" type="submit" value="Submit">
+    </form>
+  </div>
+</section>
+{% endblock %}

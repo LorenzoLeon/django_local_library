@@ -3,11 +3,17 @@ from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from dashboard.forms import SubscribeNewsletter
+from django.contrib.auth.models import User
 from django.views import generic
 from django.db.models import Sum
+from django.http import JsonResponse
+from django.forms import modelformset_factory
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
-from .models import Project, MapEvent,SubscribedUser
+from django.shortcuts import get_object_or_404
 
+from .models import Project, MapEvent,SubscribedUser,MapEventImage,MapEventSerializer
+from .forms import MapEventForm,EventDateForm
 
 from django.urls import reverse
 
@@ -83,3 +89,71 @@ class EventsStaffListView(PermissionRequiredMixin,generic.ListView):
 
 class EventDetailView(generic.DetailView):
     model = MapEvent
+
+import datetime
+
+@login_required
+def create_event_user(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    image_form_set = modelformset_factory(MapEventImage,exclude=['created_by','mapevent' ], extra=2)
+
+    if request.method == 'POST':
+
+        event_form = MapEventForm(request.POST)
+        event_form.project = project
+        formset = image_form_set(request.POST, request.FILES,
+                               queryset=MapEventImage.objects.none())
+
+
+        if event_form.is_valid() and formset.is_valid():
+            event = event_form.save(commit=False)
+            event.created_by = User.objects.get(user = request.user)
+            event.save()
+
+            for form in formset.cleaned_data:
+                image = form['image']
+                photo = MapEventImage(mapevent=event, file=image)
+                photo.save()
+            messages.success(request,"Posted!")
+            return redirect(event.get_absolute_url())
+        else:
+            print( event_form.errors, formset.errors)
+    else:
+        event_form = MapEventForm(initial={'date':datetime.date.today()})
+        formset = image_form_set(queryset=MapEventImage.objects.none())
+
+    context={
+        'project': project,
+        'event_form': event_form, 
+        'formset': formset
+    }
+    return render(request,'create_event.html',context)
+
+
+def checkProject(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    events = MapEvent.objects.filter(project = project)
+    mindate = events.earliest('date').date
+    maxdate = events.latest('date').date
+
+    if request.method == 'POST':
+        event_date_form = EventDateForm(request.POST)
+        if event_date_form.is_valid():
+            mindate = event_date_form.cleaned_data['mindate']
+            maxdate = event_date_form.cleaned_data['maxdate']
+            events = MapEvent.objects.filter(project = project).filter(date__range=[mindate, maxdate])
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                #AJAX Request
+                ser_events = [ev.as_dict() for ev in events]
+                return JsonResponse({'events': ser_events})
+            messages.success(request,"Query!")
+        else:
+            print(event_date_form.errors)
+    else:
+        event_date_form = EventDateForm(initial={'mindate':mindate,'maxdate':maxdate})
+    context={
+        'project': project,
+        'event_date_form': event_date_form,
+        'events': events,
+    }
+    return render(request,'check_project_event.html',context)

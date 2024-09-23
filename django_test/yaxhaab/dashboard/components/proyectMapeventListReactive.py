@@ -23,10 +23,10 @@ class ProyectmapeventlistreactiveView(UnicornView):
     def load_table(self):
         self.mapevents = MapEvent.objects.filter(project = self.project)
 
-    def updated_initdate(self, query):
+    def updated_mindate(self, query):
         self.load_table()
-        self.mapevents = self.mapevents.filter(date__range=[query, self.enddate])
+        self.mapevents = self.mapevents.filter(date__range=[query, self.maxdate])
 
-    def updated_enddate(self, query):
+    def updated_maxdate(self, query):
         self.load_table()
-        self.mapevents = self.mapevents.filter(date__range=[self.initdate, query])
+        self.mapevents = self.mapevents.filter(date__range=[self.mindate, query])

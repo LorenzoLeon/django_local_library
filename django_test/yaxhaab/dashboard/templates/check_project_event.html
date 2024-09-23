@@ -208,8 +208,42 @@
 
 </section>
 <!-- List de Eventos -->
-{% unicorn_scripts %}
-{% unicorn 'proyectMapeventListReactive' projectpk=project.id %}
+<section class="contact-section bg-black" id="actividades">
+    <div class="container px-4 px-lg-5">
+        <h1 class="text-white mx-auto text-uppercase text-center">Actividades y Eventos de {{project.name}}</h1>
+        <p></p><br>
+        <!--<input unicorn:model="initdate" type="datetime-local" id="initdate" />
+        <input unicorn:model="enddate" type="datetime-local" id="enddate" /><br>-->
+        <form method="post" id="datesubmit">
+            {% csrf_token %}
+            {{ event_date_form }}
+            <input type="submit" name="submit" value="Submit" />
+        </form>
+
+        <div class="row gx-4 gx-lg-5 card-group slider" id="slider">
+            {% for mapevent in events %}
+            <div class="col-md-4 mb-3 mb-md-0">
+                <div class="card px-4">
+                    <div class="card-body">
+                        <h3 class="text-uppercase m-0  text-center"><a
+                                href="{{ mapevent.get_absolute_url }}">{{mapevent.title}}</a>
+                        </h3>
+                        <hr class="my-4 mx-auto" />
+                        <div class="small text-black-50">{{mapevent.description}}</div>
+                        <hr class="my-4 mx-auto" />
+                        {% if mapevent.mapeventimage_set.first.file.url %}
+                        <img class="card-img-top" src="{{ mapevent.mapeventimage_set.first.file.url }}" alt="..." />
+                        {% endif %}
+                        <div class="small text-black-50">{{mapevent.date|date:"M j, Y h:i:s"}}</div>
+                    </div>
+                </div>
+                <br>
+            </div>
+            {% endfor %}
+            <p></p><br>
+        </div>
+    </div>
+</section>
 
 {% if user.is_authenticated %}
 <section class="signup-section" id="addevent">
@@ -219,52 +253,68 @@
                 <i class="far fa-paper-plane fa-2x mb-2 text-white"></i>
                 <h2 class="text-white mb-5">¡Agrega un evento a este proyecto!</h2>
                 <div class="col-auto">
-                    <button class="btn btn-primary" type="button" onclick="location.href='{% url 'create' pk=project.id%}'">Agregar!</button>
-                </div> 
+                    <button class="btn btn-primary" type="button"
+                        onclick="location.href='{% url 'create' pk=project.id%}'">Agregar!</button>
+                </div>
             </div>
         </div>
     </div>
 </section>
 {% endif %}
-<!-- Intento Carrusel -->
-<section class="projects-section bg-black" id="carousel">
-<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel"></div>
-    <ol class="carousel-indicators">
-      <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-      <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-      <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-    </ol>
-    <div class="carousel-inner" role="listbox">
-      <!-- Slide One - Set the background image for this slide in the line below -->
-      <div class="carousel-item active" style="background-image: url('{{ project.head_image.url}}')">
-        <div class="carousel-caption d-none d-md-block">
-          <h2 class="display-4">First Slide</h2>
-          <p class="lead">This is a description for the first slide.</p>
-        </div>
-      </div>
-      <!-- Slide Two - Set the background image for this slide in the line below -->
-      <div class="carousel-item" style="background-image: url('https://4.bp.blogspot.com/-InDD3Hm_bhU/XB4_TK3TT7I/AAAAAAAAAJ4/r5tUeCOqq1MTchFh7D7pWdf582A4qYIIwCEwYBhgL/s1600/Businesswoman-working-at-a-computer-1280x720.jpg')">
-        <div class="carousel-caption d-none d-md-block">
-          <h2 class="display-4">Second Slide</h2>
-          <p class="lead">This is a description for the second slide.</p>
-        </div>
-      </div>
-      <!-- Slide Three - Set the background image for this slide in the line below -->
-      <div class="carousel-item" style="background-image: url('https://1.bp.blogspot.com/-GWl5F8P4t-8/XB4_VV4VE5I/AAAAAAAAAKE/SmHRzas-LpMpDBoLn6otR9AznVsr6L7OgCEwYBhgL/s1600/t1larg.africa.cnn.jpg')">
-        <div class="carousel-caption d-none d-md-block">
-          <h2 class="display-4">Third Slide</h2>
-          <p class="lead">This is a description for the third slide.</p>
-        </div>
-      </div>
-    </div>
-    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-  </div>
-</section>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    $(function () {        
+        $('#datesubmit').on('submit', function (event) {
+            event.preventDefault();
+            const csrf = datesubmit.elements["csrfmiddlewaretoken"].value
+            const formData = {
+                csrfmiddlewaretoken: csrf,
+                mindate_year: datesubmit.elements["mindate_year"].value,
+                mindate_month: datesubmit.elements["mindate_month"].value,
+                mindate_day: datesubmit.elements["mindate_day"].value,
+                maxdate_year: datesubmit.elements["maxdate_year"].value,
+                maxdate_month: datesubmit.elements["maxdate_month"].value,
+                maxdate_day: datesubmit.elements["maxdate_day"].value
+            };
+            $.ajax({
+                url: "{% url 'project-detail2' pk=project.id %}",
+                type: 'POST',
+                dataType: 'json',
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": csrf,
+                },
+                data: formData,
+                success: function (response) {
+                    const eventList = $("#slider");
+                    eventList.empty();
+                    for (var event of response.events) {
+                        const rupi = event.get_image == "" ? "" : `<img class="card-img-top" src="${ event.get_image }" alt="..." />`;
+                        const eventHTMLElement = `
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="card px-4">
+                                <div class="card-body">
+                                    <h3 class="text-uppercase m-0  text-center"><a href="${event.get_absolute_url}">${event.title}</a></h3>
+                                    <hr class="my-4 mx-auto" />
+                                    <div class="small text-black-50">${event.description}</div>
+                                    <hr class="my-4 mx-auto"/>
+                                    ${rupi}
+                                    <div class="small text-black-50">${event.date}</div>
+                                </div>
+                            </div>
+                            <br>
+                        </div>
+                        `;
+                        eventList.append(eventHTMLElement);
+                    };
+                },
+                error: function (response) {
+                    console.log("AJAX response Error");
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

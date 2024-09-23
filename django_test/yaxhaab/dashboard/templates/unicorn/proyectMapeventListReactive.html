@@ -7,8 +7,8 @@
         <div id="my-numeric-slider" class="form-group numeric-slider">
             <div id='my-numeric-slider_range_min' data-range_min="{{ project.mapevent_set.earliest.date|date:'c' }}"></div>
             <div id='my-numeric-slider_range_max' data-range_max="{{ project.mapevent_set.latest.date|date:'c' }}"></div>
-            <span id='my-numeric-slider_cur_min'>{{ initdate|date:'c' }}</span> - 
-            <span id='my-numeric-slider_cur_max'>{{ enddate|date:'c' }}</span>
+            <span id='my-numeric-slider_cur_min'>{{ mindate|date:'c' }}</span> - 
+            <span id='my-numeric-slider_cur_max'>{{ maxdate|date:'c' }}</span>
             <div class="numeric-slider-range ui-slider ui-slider-horizontal ui-slider-range"></div>
             <span class="numeric-slider-range_text text-white" id='my-numeric-slider_text'>[Lower Value] - [Upper Value]</span>
             <input unicorn:model="initdate" type='hidden' unicorn:key="slider_min" id='my-numeric-slider_min' name='slider-min' value = "{{ initdate|date:'c' }}" unicorn:partial.id="my-numeric-slider_cur_min"/>

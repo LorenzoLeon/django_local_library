@@ -15,7 +15,10 @@ urlpatterns = [
 urlpatterns += [
     path('subscribe', views.subscribe, name='subscribe'),
 ]
-
+urlpatterns += [
+    path('project/<int:pk>/createevent/', views.create_event_user, name='create'),
+    path('project2/<int:pk>/', views.checkProject, name='project-detail2'),
+]
 urlpatterns += [
     path('myevents/', views.EventsUserListView.as_view(), name='my-events'),
 ]
