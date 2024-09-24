@@ -15,5 +15,5 @@ class MapEventForm(ModelForm):
         exclude= ['created_by', 'approved_by_staff','project']
 
 class EventDateForm(forms.Form):
-    start_date = forms.DateField(widget=forms.SelectDateWidget)
-    end_date = forms.DateField(widget=forms.SelectDateWidget)
+    start_date = forms.DateField(label = _("Starting Date"),widget=forms.DateInput(format="%Y-%m-%d", attrs={'type':'date'}))
+    end_date = forms.DateField(label = _("End Date"),widget=forms.DateInput(format="%Y-%m-%d", attrs={'type':'date'}))

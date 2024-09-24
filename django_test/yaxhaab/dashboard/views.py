@@ -48,7 +48,6 @@ def index(request):
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
 
-
 def subscribe(request):
     if request.method == 'POST':
         form = SubscribeNewsletter(request.POST)
@@ -93,7 +92,6 @@ class EventsStaffListView(PermissionRequiredMixin,ListView):
 class EventDetailView(DetailView):
     model = MapEvent
 
-
 @login_required
 def create_event_user(request, pk):
     project = get_object_or_404(Project, pk=pk)
@@ -136,19 +134,6 @@ def create_event_user(request, pk):
     }
     return render(request,'create_event.html',context)
 
-
-def event_update(request, pk):
-    event = get_object_or_404(MapEvent, pk=pk)
-    event_form = MapEventForm(event)
-    if False:
-        return redirect(event.get_absolute_url())
-    context={
-        'event': event,
-        'event_form': event_form,
-    }
-    return render(request, 'event_update.html', context)
-
-
 class MapEventUpdateView(PermissionRequiredMixin,UpdateView):
     permission_required = 'dashboard.can_mark_approved'
     model = MapEvent
@@ -161,8 +146,8 @@ class MapEventUpdateView(PermissionRequiredMixin,UpdateView):
 def checkProject(request, pk):
     project = get_object_or_404(Project, pk=pk)
     events = MapEvent.objects.filter(project = project)
-    mindate = events.earliest('date').date
-    maxdate = events.latest('date').date
+    mindate = events.earliest().date
+    maxdate = events.latest().date
 
     if request.method == 'POST':
         event_date_form = EventDateForm(request.POST)
@@ -179,9 +164,12 @@ def checkProject(request, pk):
             print(event_date_form.errors)
     else:
         event_date_form = EventDateForm(initial={'start_date':mindate,'end_date':maxdate})
+
     context={
         'project': project,
         'event_date_form': event_date_form,
         'events': events,
+        'startdate': mindate,
+        'enddate': maxdate,
     }
     return render(request,'check_project_event.html',context)

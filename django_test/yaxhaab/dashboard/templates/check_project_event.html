@@ -1,5 +1,4 @@
 {% extends "base_generic.html" %}
-{% load unicorn %}
 {% block title %}
 <title>Project Detail</title>
 {% endblock %}
@@ -202,11 +201,16 @@
     <div class="container text-white px-4 px-lg-5">
         <h1 class="text-white mx-auto text-uppercase text-center">Actividades y Eventos de {{project.name}}</h1>
         <p></p><br>
-        <!--<input unicorn:model="initdate" type="datetime-local" id="initdate" />
-        <input unicorn:model="enddate" type="datetime-local" id="enddate" /><br>-->
         <form method="post" id="datesubmit">
             {% csrf_token %}
             {{ event_date_form }}
+            <div id="my-numeric-slider" class="form-group numeric-slider">
+                <div id='my-numeric-slider_range_min' data-range_min="{{startdate|date:'c'}}"></div>
+                <div id='my-numeric-slider_range_max' data-range_max="{{enddate|date:'c'}}"></div>
+                <div class="numeric-slider-range ui-slider ui-slider-horizontal ui-slider-range"></div>
+                From: <span id='my-numeric-slider_min' class="numeric-slider-range_text text-white">{{startdate|date:'d-m-Y'}}</span>, to:
+                <span id='my-numeric-slider_max' class="numeric-slider-range_text text-white">{{enddate|date:'d-m-Y'}}</span>
+            </div>
             <input type="submit" name="submit" value="Filter" />
         </form>
 
@@ -255,21 +259,88 @@
 
 {% block javascript %}
 <script>
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [day,month,year].join('-');
+    }
+    function formatDateBad(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year,month,day].join('-');
+    }
+    $(function () {
+        $(".numeric-slider-range").slider({
+            range: true,
+            min: 0,
+            max: 100,
+            slide: function (event, ui) {
+                let new_min = new Date(ui.values[0])
+                let new_max = new Date(ui.values[1])
+                $("#" + $(this).parent().attr("id") + "_max").val(new Date(ui.values[1]));
+                $("#" + $(this).parent().attr("id") + "_min").val(new Date(ui.values[0]));
+
+                let new_text_min = formatDate(new_min);
+                let new_text_max = formatDate(new_max);
+                $("#" + $(this).parent().attr("id") + "_min").text(new_text_min);
+                $("#" + $(this).parent().attr("id") + "_max").text(new_text_max);
+                document.getElementById("id_start_date").value = formatDateBad(new_min)
+                document.getElementById("id_end_date").value = formatDateBad(new_max)
+            },
+            create: function (event, ui) {
+                var range_min = $("#" + $(".numeric-slider").attr("id") + "_range_min").data("range_min");
+                var range_max = $("#" + $(".numeric-slider").attr("id") + "_range_max").data("range_max");
+                $(this).slider("option", 'min', Date.parse(range_min)-1);
+                $(this).slider("option", 'max', Date.parse(range_max)+100000000);
+                $(this).slider("option", 'values', [Date.parse(range_min), Date.parse(range_max)]);
+            }
+        });
+        $("#" + $(".numeric-slider").attr("id") + "_text")
+            .text(            ' - ' );
+        document.getElementById("id_start_date").onchange = function(){
+            var newval = document.getElementById("id_start_date").value;
+            $(".numeric-slider-range").slider('values',0, Date.parse(newval));
+            $("#" +$(".numeric-slider").attr("id") + "_min").text(formatDate(Date.parse(newval)));
+        }
+        document.getElementById("id_end_date").onchange = function(){
+            var newval = document.getElementById("id_end_date").value;
+            $(".numeric-slider-range").slider('values',1, Date.parse(newval));
+            $("#" +$(".numeric-slider").attr("id") + "_max").text(formatDate(Date.parse(newval)));
+        }
+
+    });
+
+</script>
+<script>
+
     $(function () {
         $('#datesubmit').on('submit', function (event) {
             event.preventDefault();
             const csrf = datesubmit.elements["csrfmiddlewaretoken"].value
             const formData = {
                 csrfmiddlewaretoken: csrf,
-                start_date_year: datesubmit.elements["start_date_year"].value,
-                start_date_month: datesubmit.elements["start_date_month"].value,
-                start_date_day: datesubmit.elements["start_date_day"].value,
-                end_date_year: datesubmit.elements["end_date_year"].value,
-                end_date_month: datesubmit.elements["end_date_month"].value,
-                end_date_day: datesubmit.elements["end_date_day"].value
+                start_date: datesubmit.elements["id_start_date"].value,
+                end_date: datesubmit.elements["id_end_date"].value,
+                
             };
             $.ajax({
-                url: "{% url 'project-detail2' pk=project.id %}",
+                url: "{% url 'project-detail' pk=project.id %}",
                 type: 'POST',
                 dataType: 'json',
                 headers: {
@@ -308,17 +379,17 @@
     });
     const x = document.getElementById("demo");
 
-function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-    } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+        }
     }
-}
 
-function showPosition(position) {
-    x.innerHTML = "Latitude: " + position.coords.latitude +
-        "<br>Longitude: " + position.coords.longitude;
-}
+    function showPosition(position) {
+        x.innerHTML = "Latitude: " + position.coords.latitude +
+            "<br>Longitude: " + position.coords.longitude;
+    }
 </script>
 {% endblock %}
