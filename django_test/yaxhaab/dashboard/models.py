@@ -167,7 +167,7 @@ class MapEvent(models.Model):
             'id': self.id, 
             'title': self.title, 
             'description': self.description,
-            'date': self.date.strftime("%b %d, %Y"),
+            'date': self.date.strftime("%x"),
             'get_absolute_url': self.get_absolute_url(),
             'get_image': fil_ur,
         }

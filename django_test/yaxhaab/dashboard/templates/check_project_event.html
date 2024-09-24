@@ -178,20 +178,17 @@
     </script>
 </section>
 <!--Map2-->
-<section class="projects-section bg-black" id="mapa2"></section>
+<section class="projects-section bg-black" id="mapa2">
 
 <center>
-    <svg height="551" width="460" id="myplot_image"></svg>
-    <button class="w3-btn w3-blue w3-round" onclick="getLocation()">Try It</button>
-    <p id="demo"></p>
+    <div id="myplot_image2"></div>
 </center>
 {% load static %}
 <script type="module">
-    d3.select("#myplot_image").append("svg:image")
-        .attr("xlink:href", "{% static 'assets/sanjeronimo.svg' %}")
-        .attr("width", 460)
-        .attr("height", 551)
-        .attr("class", "graph-svg-component");
+
+    d3.svg("{% static 'assets/sanjeronimo.svg' %}").then(function (xml) {
+        d3.select("#myplot_image2").node().appendChild(xml.documentElement);
+    });
 </script>
 
 
@@ -201,18 +198,22 @@
     <div class="container text-white px-4 px-lg-5">
         <h1 class="text-white mx-auto text-uppercase text-center">Actividades y Eventos de {{project.name}}</h1>
         <p></p><br>
-        <form method="post" id="datesubmit">
-            {% csrf_token %}
-            {{ event_date_form }}
-            <div id="my-numeric-slider" class="form-group numeric-slider">
-                <div id='my-numeric-slider_range_min' data-range_min="{{startdate|date:'c'}}"></div>
-                <div id='my-numeric-slider_range_max' data-range_max="{{enddate|date:'c'}}"></div>
-                <div class="numeric-slider-range ui-slider ui-slider-horizontal ui-slider-range"></div>
-                From: <span id='my-numeric-slider_min' class="numeric-slider-range_text text-white">{{startdate|date:'d-m-Y'}}</span>, to:
-                <span id='my-numeric-slider_max' class="numeric-slider-range_text text-white">{{enddate|date:'d-m-Y'}}</span>
-            </div>
-            <input type="submit" name="submit" value="Filter" />
-        </form>
+        <center>
+            <form method="post" id="datesubmit">
+                {% csrf_token %}
+                {{ event_date_form }}
+                <div id="my-numeric-slider" class="form-group numeric-slider">
+                    <div id='my-numeric-slider_range_min' data-range_min="{{startdate|date:'c'}}"></div>
+                    <div id='my-numeric-slider_range_max' data-range_max="{{enddate|date:'c'}}"></div>
+                    <div class="numeric-slider-range ui-slider ui-slider-horizontal ui-slider-range"></div>
+                    From: <span id='my-numeric-slider_min'
+                    class="numeric-slider-range_text text-white">{{startdate|date:'d-m-Y'}}</span>, to:
+                    <span id='my-numeric-slider_max'
+                    class="numeric-slider-range_text text-white">{{enddate|date:'d-m-Y'}}</span>
+                </div>
+                <input type="submit" name="submit" value="Filter" />
+            </form>
+        </center>
 
         <div class="row gx-4 gx-lg-5 card-group slider" id="slider">
             {% for mapevent in events %}
@@ -228,7 +229,7 @@
                         {% if mapevent.mapeventimage_set.first.file.url %}
                         <img class="card-img-top" src="{{ mapevent.mapeventimage_set.first.file.url }}" alt="..." />
                         {% endif %}
-                        <div class="small text-black-50">{{mapevent.date|date:"M j, Y"}}</div>
+                        <div class="small text-black-50">{{mapevent.date|date:"jS M Y"}}</div>
                     </div>
                 </div>
                 <br>
@@ -270,7 +271,7 @@
         if (day.length < 2)
             day = '0' + day;
 
-        return [day,month,year].join('-');
+        return [day, month, year].join('-');
     }
     function formatDateBad(date) {
         var d = new Date(date),
@@ -283,7 +284,7 @@
         if (day.length < 2)
             day = '0' + day;
 
-        return [year,month,day].join('-');
+        return [year, month, day].join('-');
     }
     $(function () {
         $(".numeric-slider-range").slider({
@@ -306,22 +307,22 @@
             create: function (event, ui) {
                 var range_min = $("#" + $(".numeric-slider").attr("id") + "_range_min").data("range_min");
                 var range_max = $("#" + $(".numeric-slider").attr("id") + "_range_max").data("range_max");
-                $(this).slider("option", 'min', Date.parse(range_min)-1);
-                $(this).slider("option", 'max', Date.parse(range_max)+100000000);
+                $(this).slider("option", 'min', Date.parse(range_min) - 1);
+                $(this).slider("option", 'max', Date.parse(range_max) + 100000000);
                 $(this).slider("option", 'values', [Date.parse(range_min), Date.parse(range_max)]);
             }
         });
         $("#" + $(".numeric-slider").attr("id") + "_text")
-            .text(            ' - ' );
-        document.getElementById("id_start_date").onchange = function(){
+            .text(' - ');
+        document.getElementById("id_start_date").onchange = function () {
             var newval = document.getElementById("id_start_date").value;
-            $(".numeric-slider-range").slider('values',0, Date.parse(newval));
-            $("#" +$(".numeric-slider").attr("id") + "_min").text(formatDate(Date.parse(newval)));
+            $(".numeric-slider-range").slider('values', 0, Date.parse(newval));
+            $("#" + $(".numeric-slider").attr("id") + "_min").text(formatDate(Date.parse(newval)));
         }
-        document.getElementById("id_end_date").onchange = function(){
+        document.getElementById("id_end_date").onchange = function () {
             var newval = document.getElementById("id_end_date").value;
-            $(".numeric-slider-range").slider('values',1, Date.parse(newval));
-            $("#" +$(".numeric-slider").attr("id") + "_max").text(formatDate(Date.parse(newval)));
+            $(".numeric-slider-range").slider('values', 1, Date.parse(newval));
+            $("#" + $(".numeric-slider").attr("id") + "_max").text(formatDate(Date.parse(newval)));
         }
 
     });
@@ -337,7 +338,7 @@
                 csrfmiddlewaretoken: csrf,
                 start_date: datesubmit.elements["id_start_date"].value,
                 end_date: datesubmit.elements["id_end_date"].value,
-                
+
             };
             $.ajax({
                 url: "{% url 'project-detail' pk=project.id %}",
@@ -377,19 +378,5 @@
             });
         });
     });
-    const x = document.getElementById("demo");
-
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
-        } else {
-            x.innerHTML = "Geolocation is not supported by this browser.";
-        }
-    }
-
-    function showPosition(position) {
-        x.innerHTML = "Latitude: " + position.coords.latitude +
-            "<br>Longitude: " + position.coords.longitude;
-    }
 </script>
 {% endblock %}
