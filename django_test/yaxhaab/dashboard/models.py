@@ -1,3 +1,4 @@
+import uuid # Required for unique book instances
 from django.db import models
 from django.contrib.auth.models import User
 # Used in get_absolute_url() to get URL for specified ID
@@ -8,7 +9,7 @@ from django.db.models import UniqueConstraint
 # Returns lower cased value of field
 from django.db.models.functions import Lower
 from django.utils.translation import gettext_lazy as _
-import uuid # Required for unique book instances
+from django.utils import timezone
 
 
 class State(models.Model):
@@ -189,8 +190,6 @@ class MapEventImage(models.Model):
     file = models.ImageField()
     mapevent = models.ForeignKey(MapEvent, on_delete=models.CASCADE)
 
-from django.utils import timezone
-
 class SubscribedUser(models.Model):
     name = models.CharField(max_length=100)
     email = models.CharField(max_length=100,primary_key=True, unique=True,help_text=_("Email address for newsletter signup"))
@@ -198,10 +197,3 @@ class SubscribedUser(models.Model):
     
     def __str__(self):
         return self.email
-    
-from rest_framework import serializers
-
-class MapEventSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MapEvent
-        fields = ['id', 'title', 'description', 'date']

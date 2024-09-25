@@ -1,5 +1,5 @@
 {% extends "base_generic.html" %}
-
+{% load i18n %}
 {% block title %}
 <title>Proyectos de captura de carbono</title>
 {% endblock %}
@@ -9,8 +9,8 @@
         <div class="d-flex justify-content-center">
             <div class="text-center">
                 <h1 class="mx-auto my-0 text-uppercase">Yaax Carbon</h1>
-                <h2 class="text-white-50 mx-auto mt-2 mb-5">Plataforma de seguimiento de actividades</h2>
-                <a class="btn btn-primary" href="#about">Conoce más</a>
+                <h2 class="text-white-50 mx-auto mt-2 mb-5">{% trans "Proyect Monitoring Dashboard"%}</h2>
+                <a class="btn btn-primary" href="#about">{% trans "Learn more"%}</a>
             </div>
         </div>
     </div>
@@ -19,11 +19,14 @@
     <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-lg-8">
-                <h2 class="text-white mb-4  text-center">Ayúdanos a salvar nuestro futuro</h2>
+                <h2 class="text-white mb-4  text-center">{% trans "Help us save the future!"%}</h2>
                 <p class="text-white-50">{% load humanize %}
-                    Yaax-Carbon ha desarrollado más de {{num_projects}} proyectos y actualmente tenemos {{num_active_projects}} activos.
-                    En conjunto estámos trabajando con una cobertura de más de {{ num_hectares|intcomma }} hectarea{{ num_hectares|pluralize}}. 
-                    <br><br>Este año, llevamos más de {{num_mapevents}} actividades de conservación, capacitación, talleres, inventario e investigación en nuestras comunidades.
+                    {% blocktranslate with numprojects=num_projects numactiveprojects=num_active_projects numhectares=num_hectares|intcomma nummapevents=num_mapevents %}
+                    Yaax-Carbon has developed over {{numprojects}} proyects and currently manages {{numactiveprojects}} active ones.
+                    In total, we are leading conservation efforts in over {{ numhectares }} hectares.
+                    <br><br>
+                    This year, we have organized {{nummapevents}} activities towards conservation, teaching, workshops and research with the communities in our proyects.
+                    {% endblocktranslate %}
                 </p>
             </div>
         </div>{% load static %}
@@ -38,8 +41,8 @@
             <div class="col-xl-8 col-lg-7"><a href="{% url 'projects' %}"><img class="img-fluid mb-3 mb-lg-0" src="{% static 'assets/bg-masthead.jpg' %}" alt="..." /></a></div>
             <div class="col-xl-4 col-lg-5">
                 <div class="featured-text text-center text-lg-left">
-                    <h4>Explora nuestros proyectos</h4>
-                    <p class="text-black-50 mb-0">Esta es nuestra plataforma de seguimiento de operaciones de conservación en todos nuestros proyectos activos en México.</p>
+                    <h4>{% trans "Explore our projects"%}</h4>
+                    <p class="text-black-50 mb-0">{% trans "This is our operations monitoring and auditing platform for our conservation proyects in Mexico"%}</p>
                 </div>
             </div>
         </div>
@@ -65,9 +68,17 @@
                     <div class="d-flex h-100">
                         <div class="project-text w-100 my-auto text-center text-lg-right">
                             <h4 class="text-white">Mountains</h4>
-                            <p class="mb-0 text-white-50">Another example of a project with its respective description.
+                            <p class="mb-0 text-white-50">
+                                {% blocktranslate %}
+                                Another example of a project with its respective description.
                                 These sections work well responsively as well!
-                                You have visited this page {{ num_visits }} time{{ num_visits|pluralize }}.
+                                {% endblocktranslate %}
+
+                                {% blocktranslate count numvisit=num_visits %}
+                                You have visited this page {{ numvisit }} time.
+                                {% plural %}
+                                You have visited this page {{ numvisit }} times.
+                                {% endblocktranslate %}
                             </p>
                         </div>
                     </div>

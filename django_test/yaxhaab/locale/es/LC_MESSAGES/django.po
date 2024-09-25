@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-24 09:31-0600\n"
+"POT-Creation-Date: 2024-09-24 18:27-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,193 +19,345 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
 "1 : 2;\n"
+
 #: dashboard/forms.py:9
 msgid "Enter a new email"
-msgstr ""
+msgstr "Escribe tu correo"
 
 #: dashboard/forms.py:10
 msgid "Enter a new name"
-msgstr ""
+msgstr "Escribe tu nombre"
 
 #: dashboard/forms.py:18
 msgid "Starting Date"
-msgstr ""
+msgstr "Fecha de Inicio"
 
 #: dashboard/forms.py:19
 msgid "End Date"
-msgstr ""
+msgstr "Fecha final"
 
 #: dashboard/models.py:38
 msgid "Enter a Proyect Name here"
-msgstr ""
+msgstr "Escribe el nombre de proyecto"
 
 #: dashboard/models.py:40
 msgid "Enter 3 characters as project abbreviation"
-msgstr ""
+msgstr "Escribe 3 letras como abreviación"
 
 #: dashboard/models.py:41 dashboard/models.py:43
 msgid "Enter number of credits issued"
-msgstr ""
+msgstr "¿Cuántos bonos ha emitido?"
 
 #: dashboard/models.py:42
 msgid "Enter number of credits sold"
-msgstr ""
+msgstr "¿Cuántos bonos ha vendido?"
 
 #: dashboard/models.py:45
 msgid "Enter number of hectares in activity area"
-msgstr ""
+msgstr "¿Cuántas hectáreas hay en el área de actividad?"
 
 #: dashboard/models.py:46
 msgid "Enter community population"
-msgstr ""
+msgstr "¿Cuánta población hay?"
 
 #: dashboard/models.py:47
 msgid "Enter number of land_owners"
-msgstr ""
+msgstr "¿Cuántos propietarios, ejidatarios o comuneros?"
 
 #: dashboard/models.py:48
 msgid "Enter project start date"
-msgstr ""
+msgstr "Fecha de inicio del proyecto"
 
 #: dashboard/models.py:50
 msgid "Enter a proyect description"
-msgstr ""
+msgstr "Escribe una descripción del proyecto"
 
 #: dashboard/models.py:68
 msgid "Proyect already exists (case insensitive match)"
-msgstr ""
+msgstr "El proyecto ya existe (ignora mayúsculas)"
 
 #: dashboard/models.py:76
 msgid "Enter a Map Name here"
-msgstr ""
+msgstr "Nombre del mapa"
 
 #: dashboard/models.py:96
 msgid "Enter a Point type here"
-msgstr ""
+msgstr "Tipo de Punto"
 
 #: dashboard/models.py:108
 msgid "Points type already exists (case insensitive match)"
-msgstr ""
+msgstr "Tipo ya existe (ignora mayúsculas)"
 
 #: dashboard/models.py:115
 msgid "Unique ID for this particular map point across whole library"
-msgstr ""
+msgstr "ID único para este punto"
 
 #: dashboard/models.py:120
 msgid "Size for this Map Point"
-msgstr ""
+msgstr "Tamaño de punto"
 
 #: dashboard/models.py:127
 msgid "Enter an Event type here"
-msgstr ""
+msgstr "Tipo de evento"
 
 #: dashboard/models.py:138
 msgid "Event type already exists (case insensitive match)"
-msgstr ""
+msgstr "El evento ya existe (ignora mayúsculas)"
 
 #: dashboard/models.py:146 dashboard/models.py:152
 msgid "Enter an Event link here"
-msgstr ""
+msgstr "Link para evento"
 
 #: dashboard/models.py:149
 msgid "Enter an event description"
-msgstr ""
+msgstr "Descripción del evento"
 
 #: dashboard/models.py:153
 msgid "Enter the event's date"
-msgstr ""
+msgstr "Fecha del evento"
 
 #: dashboard/models.py:196
 msgid "Email address for newsletter signup"
-msgstr ""
+msgstr "Correo electrónico para suscribirse"
 
 #: dashboard/templates/base_generic.html:11
 msgid "Local Library"
-msgstr ""
+msgstr "Acervo"
 
 #: dashboard/templates/base_generic.html:56
 msgid "Start"
-msgstr ""
+msgstr "Inicio"
 
 #: dashboard/templates/base_generic.html:57
 msgid "Projects"
-msgstr ""
+msgstr "Proyectos"
 
 #: dashboard/templates/base_generic.html:58
 msgid "Contact"
-msgstr ""
+msgstr "Contacto"
 
 #: dashboard/templates/base_generic.html:61
 msgid "User"
-msgstr ""
+msgstr "Usuario"
 
 #: dashboard/templates/base_generic.html:62
 msgid "My Events"
-msgstr ""
+msgstr "Mis eventos"
 
 #: dashboard/templates/base_generic.html:64
 msgid "All Events"
-msgstr ""
+msgstr "Todos los eventos"
 
 #: dashboard/templates/base_generic.html:69
 msgid "Logout"
-msgstr ""
+msgstr "Cerrar Sesión"
 
 #: dashboard/templates/base_generic.html:73
+#: templates/registration/login.html:12
 msgid "Login"
-msgstr ""
+msgstr "Iniciar sesión"
 
-#: dashboard/templates/base_generic.html:92
+#: dashboard/templates/base_generic.html:108
 msgid "Subscribe to learn more!"
-msgstr ""
+msgstr "Suscribirse para aprender más"
 
-#: dashboard/templates/base_generic.html:98
+#: dashboard/templates/base_generic.html:114
 msgid "Write your name..."
-msgstr ""
+msgstr "Escribe tu nombre..."
 
-#: dashboard/templates/base_generic.html:102
-#: dashboard/templates/base_generic.html:103
+#: dashboard/templates/base_generic.html:118
+#: dashboard/templates/base_generic.html:119
 msgid "Write your email address..."
-msgstr ""
+msgstr "Escribe tu correo..."
 
-#: dashboard/templates/base_generic.html:106
+#: dashboard/templates/base_generic.html:122
 msgid "Subscribe!"
-msgstr ""
+msgstr "¡Suscribirme!"
 
-#: dashboard/templates/base_generic.html:125
+#: dashboard/templates/base_generic.html:141
 msgid "Address"
-msgstr ""
+msgstr "Dirección"
 
-#: dashboard/templates/base_generic.html:135
+#: dashboard/templates/base_generic.html:151
 msgid "Email"
-msgstr ""
+msgstr "Correo"
 
-#: dashboard/templates/base_generic.html:146
+#: dashboard/templates/base_generic.html:162
 msgid "Phone"
+msgstr "Teléfono"
+
+#: dashboard/templates/index.html:12
+msgid "Proyect Monitoring Dashboard"
+msgstr "Plataforma Monitor de Proyectos"
+
+#: dashboard/templates/index.html:13
+msgid "Learn more"
+msgstr "Saber más"
+
+#: dashboard/templates/index.html:22
+msgid "Help us save the future!"
+msgstr "¡Ayudanos a salvar nuestro futuro!"
+
+#: dashboard/templates/index.html:24
+#, python-format
+msgid ""
+"\n"
+"                    Yaax-Carbon has developed over %(numprojects)s proyects "
+"and currently manages %(numactiveprojects)s active ones.\n"
+"                    In total, we are leading conservation efforts in over "
+"%(numhectares)s hectares.\n"
+"                    <br><br>\n"
+"                    This year, we have organized %(nummapevents)s activities "
+"towards conservation, teaching, workshops and research with the communities "
+"in our proyects.\n"
+"                    "
 msgstr ""
+"\n"
+"Yaax-Carbon ha desarrollado más de %(numprojects)s proyectos y actualmente "
+"tenemos %(numactiveprojects)s activos.\n"
+"En conjunto estámos trabajando con una cobertura de más de %(numhectares)s "
+"hectareas.\n"
+"Este año, llevamos más de %(nummapevents)s actividades de conservación, "
+"capacitación, talleres, inventario e investigación en nuestras comunidades."
+
+#: dashboard/templates/index.html:44
+msgid "Explore our projects"
+msgstr "Explora nuestros proyectos"
+
+#: dashboard/templates/index.html:45
+msgid ""
+"This is our operations monitoring and auditing platform for our conservation "
+"proyects in Mexico"
+msgstr ""
+"Esta es nuestra plataforma de monitoreo y supervisión de las operaciones en México"
+
+#: dashboard/templates/index.html:72
+msgid ""
+"\n"
+"                                Another example of a project with its "
+"respective description.\n"
+"                                These sections work well responsively as "
+"well!\n"
+"                                "
+msgstr "\n"
+"Otro ejemplo de un proyecto."
+
+#: dashboard/templates/index.html:77
+#, python-format
+msgid ""
+"\n"
+"                                You have visited this page %(numvisit)s "
+"time.\n"
+"                                "
+msgid_plural ""
+"\n"
+"                                You have visited this page %(numvisit)s "
+"times.\n"
+"                                "
+msgstr[0] ""
+"\n"
+"No has visitado esta página antes."
+msgstr[1] ""
+"\n"
+"Has visitado esta página una vez."
+msgstr[2] ""
+"\n"
+"Has visitado esta página %(numvisit)s veces."
 
 #: dashboard/views.py:59
 #, python-format
 msgid "%(email)s email address is already a subscriber"
-msgstr ""
+msgstr "El correo %(email)s ya está suscrito"
 
 #: dashboard/views.py:65
 #, python-format
 msgid "%(email)s email was successfully subscribed to our newsletter!"
-msgstr ""
+msgstr "¡%(email)s fue exitosamente suscrito a la lista!"
 
 #: dashboard/views.py:67
 msgid "You must type legit name and email to subscribe to a Newsletter"
-msgstr ""
+msgstr "Escribe un nombre y correo válido para suscribirte"
 
 #: dashboard/views.py:117
 msgid "New Event Posted!"
+msgstr "Nuevo evento agregado"
+
+#: templates/registration/logged_out.html:11
+msgid "Logged out"
+msgstr "Cerraste sesión"
+
+#: templates/registration/logged_out.html:12
+msgid "Login again"
+msgstr "Iniciar sesión de nuevo"
+
+#: templates/registration/login.html:14
+msgid "Your username and password didn't match. Please try again."
+msgstr "Tu usuario o contraseña no son correctos. Intenta de nuevo."
+
+#: templates/registration/login.html:22
+msgid "Please login to see this page."
+msgstr "Inicia sesión para ver esta página."
+
+#: templates/registration/login.html:43
+msgid "Lost your password?"
+msgstr "Perdí mi contraseña"
+
+#: templates/registration/password_reset_complete.html:4
+msgid "The password has been changed!"
+msgstr "¡Cambiaste tu contraseña!"
+
+#: templates/registration/password_reset_complete.html:5
+msgid "Log in again?"
+msgstr "¿Volver a iniciar sesión?"
+
+#: templates/registration/password_reset_confirm.html:5
+msgid "Please enter (and confirm) your new password."
+msgstr "Ingresa y confirma tu nueva contraseña."
+
+#: templates/registration/password_reset_confirm.html:11
+msgid "New password:"
+msgstr "Nueva contraseña:"
+
+#: templates/registration/password_reset_confirm.html:16
+msgid "Confirm password:"
+msgstr "Confirma la contraseña:"
+
+#: templates/registration/password_reset_confirm.html:21
+msgid "Change my password"
+msgstr "Cambiar mi contraseña"
+
+#: templates/registration/password_reset_confirm.html:26
+msgid "Password reset failed"
+msgstr "El cambio de contraseña falló"
+
+#: templates/registration/password_reset_confirm.html:27
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used. Please request a new password reset."
 msgstr ""
+"El enlace para cambiar la contraseña es inválido, probablemente porque ya "
+"fue usado. Solicita de nuevo el cambio de contraseña."
+
+#: templates/registration/password_reset_done.html:5
+msgid ""
+"\n"
+"  We've emailed you instructions for setting your password. If they haven't "
+"arrived in a few minutes, check your spam\n"
+"  folder.\n"
+"  "
+msgstr ""
+"\n"
+"Acabamos de enviar las instrucciones para cambiar tu contraseña por correo. "
+"Si no han llegado en unos minutos, revisa en el folder de correo no deseado."
+
+#: templates/registration/password_reset_form.html:10
+msgid "Reset password"
+msgstr "Cambiar contraseña"
 
 #: yaxhaab/settings.py:122
 msgid "English"
-msgstr ""
+msgstr "Inglés"
 
 #: yaxhaab/settings.py:123
 msgid "German"
-msgstr ""
+msgstr "Alemán"

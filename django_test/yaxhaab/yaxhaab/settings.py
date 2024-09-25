@@ -119,13 +119,14 @@ USE_L10N = True
 USE_TZ = True
 
 LANGUAGES = [
-    ("en", _("English")),
-    ("es", _("German")),
+    ("es", _("Español")),
+    ("en", _("English"))
 ]
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale')
 ]
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'es'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

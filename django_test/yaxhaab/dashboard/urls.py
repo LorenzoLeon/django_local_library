@@ -14,6 +14,7 @@ urlpatterns = [
     path('project/<int:pk>/createevent/', views.create_event_user, name='create'),
     path('project2/<int:pk>', views.ProjectDetailView.as_view(), name='project-detail2'),
     path('subscribe', views.subscribe, name='subscribe'),
+    path("i18n/", include("django.conf.urls.i18n"), name = "set_language"),
 ]
 
 urlpatterns += [
