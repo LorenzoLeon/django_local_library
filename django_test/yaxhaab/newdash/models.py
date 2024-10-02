@@ -198,12 +198,22 @@ class ProjectImage(Timestampable):
         get_latest_by = 'modified_date'
 
 class EventType(models.Model):
+    """Model representing an abstract Event Type."""
     name = models.CharField(
         max_length=50,
         unique=True,
         help_text=_("Enter an Event Type here")
     )
     file = models.ImageField()
+    class Meta:
+        """Constraints"""
+        abstract = True
+
+class EventTypeDefault(EventType):
+    pass
+
+class EventTypeProyect(EventType):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
 
 
 class Event(Authorable, Permalinkable,Timestampable):
@@ -213,7 +223,7 @@ class Event(Authorable, Permalinkable,Timestampable):
         unique=True,
         help_text=_("Enter an Event Name here")
     )
-    type = models.ForeignKey(EventType, on_delete=models.RESTRICT)
+    type = models.ForeignKey(EventTypeProyect, on_delete=models.RESTRICT)
     description = models.TextField(help_text=_(
         "Enter a proyect description"), null=True, blank=True)
     active = models.BooleanField(default=False)
@@ -251,7 +261,7 @@ class EventImage(Timestampable):
         EVENT = 'ev', 'Event Image'
 
     Event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    type = models.TextField(max_length=2, choices=ImageTypes.choices)
+    type = models.TextField(max_length=2, choices=ImageTypes.choices, default='ev')
     file = models.ImageField()
 
     class Meta:
