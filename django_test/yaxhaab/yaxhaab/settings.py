@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'dashboard.apps.DashboardConfig',
     'django.contrib.humanize',
     'django_unicorn',
-    'rest_framework'
+    'rest_framework',
+    'taggit',
 ]
 
 MIDDLEWARE = [
