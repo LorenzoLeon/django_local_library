@@ -1,3 +1,5 @@
+"""Module providing new dash models."""
+
 from django.db import models
 from django.db.models import UniqueConstraint
 
@@ -5,11 +7,14 @@ from django.db.models.functions import Lower
 from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
 
-from .behaviors import Authorable, Permalinkable, Timestampable, Characteristic, TextCharacteristic, NumberCharacteristic
+from .behaviors import Authorable, Permalinkable, Timestampable
+from .behaviors import Characteristic, TextCharacteristic, NumberCharacteristic
 
 
 class TerrestrialEcoRegions(models.Model):
+    """Class representing a Terrestial Ecoregion WWF"""
     class BiogeographicRealms(models.TextChoices):
+        """ENUM representing a Terrestial Realm WWF"""
         NEARCTIC = 'NA', 'Nearctic'
         PALEARCTIC = 'PA', 'Palearctic'
         AFROTROPIC = 'AT', 'Afrotropic'
@@ -20,6 +25,7 @@ class TerrestrialEcoRegions(models.Model):
         ANTARCTIC = 'AN', 'Antarctic'
 
     class TerrestrialBiomes(models.TextChoices):
+        """ENUM representing a Terrestial Biome WWF"""
         # "Bosques húmedos tropicales y subtropicales"
         TSMF = '1', _(
             'Tropical and subtropical moist broadleaf forests (tropical and subtropical, humid)')
@@ -65,11 +71,19 @@ class TerrestrialEcoRegions(models.Model):
         "Enter a Ecoregion (WWF) Name here"))
 
     def get_code(self):
+        """Creates a WWF accepted Ecoregion CODE
+
+        Returns
+        -------
+            str
+        """
         return self.realm+self.biome+self.id
 
 
 class MarineEcoRegions(models.Model):
+    """Class representing a Marine Ecoregion WWF"""
     class BiogeographicRealms(models.TextChoices):
+        """ENUM representing a Marine Realm WWF"""
         ARCTIC = '1', _("Arctic")
         TNA = '2', _("Temperate Northern Atlantic")
         TNP = '3', _("Temperate Northern Pacific")
@@ -84,16 +98,17 @@ class MarineEcoRegions(models.Model):
         SO = '12', _("Southern Ocean")
 
     class MarineBiomes(models.TextChoices):
+        """ENUM representing a Marine Biome WWF"""
         # "Polar"
-        Polar = '1', _("Polar")  
+        Polar = '1', _("Polar")
         # "Mares y plataformas templadas"
         TSS = '2', _("Temperate shelves and sea")
         # "Surgencias templadas"
-        TEU = '3', _("Temperate upwelling")  
+        TEU = '3', _("Temperate upwelling")
         # "Surgencias tropicales"
-        TRU = '4', _("Tropical upwelling")  
+        TRU = '4', _("Tropical upwelling")
         # "Corales tropicales"
-        TRC = '5', _("Tropical coral")  
+        TRC = '5', _("Tropical coral")
     realm = models.TextField(max_length=2, choices=BiogeographicRealms.choices)
     biome = models.TextField(max_length=2, choices=MarineBiomes.choices)
     id = models.IntegerField(help_text=_("Enter specific biome id"))
@@ -101,10 +116,16 @@ class MarineEcoRegions(models.Model):
         "Enter a Ecoregion (WWF) Name here"))
 
     def get_code(self):
+        """Creates a WWF accepted Ecoregion CODE
+
+        Returns
+        -------
+            str
+        """
         return self.realm+self.biome+self.id
 
 
-class Project(Authorable, Permalinkable, models.Model):
+class Project(Authorable, Permalinkable):
     """Model representing a Proyect."""
     name = models.CharField(
         max_length=200,
@@ -122,6 +143,7 @@ class Project(Authorable, Permalinkable, models.Model):
         return str(self.name)
 
     class Meta:
+        """Constraints"""
         constraints = [
             UniqueConstraint(
                 Lower('name'),
@@ -139,23 +161,29 @@ class Project(Authorable, Permalinkable, models.Model):
 
 
 class ProjectTextCharacteristic(Characteristic, TextCharacteristic, Timestampable):
+    """Proyect Text Characteristic Model Database"""
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
 
     class Meta:
+        """Meta Ordering"""
         ordering = ['modified_date']
         get_latest_by = 'modified_date'
 
 
 class ProjectNumberCharacteristic(Characteristic, NumberCharacteristic, Timestampable):
+    """Proyect Number Characteristic Model Database"""
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
 
     class Meta:
+        """Meta Ordering"""
         ordering = ['modified_date']
         get_latest_by = 'modified_date'
 
 
 class ProjectImage(Timestampable):
+    """Proyect Image Model Database"""
     class ImageTypes(models.TextChoices):
+        """ENUM representing a Marine Biome WWF"""
         HEAD = 'hi', 'Head Image'
         STOCK = 'st', 'Stock Image'
         EVENT = 'ev', 'Event Image'
@@ -165,5 +193,68 @@ class ProjectImage(Timestampable):
     file = models.ImageField()
 
     class Meta:
+        """Meta Ordering"""
+        ordering = ['modified_date']
+        get_latest_by = 'modified_date'
+
+class EventType(models.Model):
+    name = models.CharField(
+        max_length=50,
+        unique=True,
+        help_text=_("Enter an Event Type here")
+    )
+    file = models.ImageField()
+
+
+class Event(Authorable, Permalinkable,Timestampable):
+    """Model representing a Proyect."""
+    name = models.CharField(
+        max_length=200,
+        unique=True,
+        help_text=_("Enter an Event Name here")
+    )
+    type = models.ForeignKey(EventType, on_delete=models.RESTRICT)
+    description = models.TextField(help_text=_(
+        "Enter a proyect description"), null=True, blank=True)
+    active = models.BooleanField(default=False)
+    tags = TaggableManager()
+
+    url_name = "event"
+
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        """Constraints"""
+        constraints = [
+            UniqueConstraint(
+                Lower('name'),
+                name='proyect_name_case_insensitive_unique',
+                violation_error_message=_(
+                    "Proyect already exists (case insensitive match)")
+            ),
+            UniqueConstraint(
+                Lower('slug'),
+                name='proyect_slug_case_insensitive_unique',
+                violation_error_message=_(
+                    "Proyect slug already exists (case insensitive match)")
+            ),
+        ]
+
+
+class EventImage(Timestampable):
+    """Event Image Model Database"""
+    class ImageTypes(models.TextChoices):
+        """ENUM representing a Marine Biome WWF"""
+        HEAD = 'hi', 'Head Image'
+        STOCK = 'st', 'Stock Image'
+        EVENT = 'ev', 'Event Image'
+
+    Event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    type = models.TextField(max_length=2, choices=ImageTypes.choices)
+    file = models.ImageField()
+
+    class Meta:
+        """Meta Ordering"""
         ordering = ['modified_date']
         get_latest_by = 'modified_date'

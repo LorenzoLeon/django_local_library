@@ -74,11 +74,6 @@ class NumberCharacteristic(models.Model):
     class Meta:
         abstract = True
 
-class Tagable(models.Model):
-
-    class Meta:
-        abstract = True
-
 
 class FreshwaterBiomes(models.TextChoices):
     LAKES   = '1', _('Large lakes') #"Grandes lagos"
