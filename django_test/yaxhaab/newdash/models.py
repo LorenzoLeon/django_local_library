@@ -6,6 +6,7 @@ from django.db.models import UniqueConstraint
 from django.db.models.functions import Lower
 from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
+from django.utils import timezone
 
 from .behaviors import Authorable, Permalinkable, Timestampable
 from .behaviors import Characteristic, TextCharacteristic, NumberCharacteristic
@@ -197,6 +198,25 @@ class ProjectImage(Timestampable):
         ordering = ['modified_date']
         get_latest_by = 'modified_date'
 
+class Point(Authorable, Permalinkable):
+    """Abstract class"""
+    name = models.CharField(
+        max_length=200,
+        unique=True,
+        help_text=_("Enter an Event Name here")
+    )
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    description = models.TextField(help_text=_(
+        "Enter a description"), null=True, blank=True)
+    active = models.BooleanField(default=False)
+    tags = TaggableManager()
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    class Meta:
+        """Abstract declaration"""
+        abstract = True
+
 class EventType(models.Model):
     """Model representing an abstract Event Type."""
     name = models.CharField(
@@ -210,26 +230,17 @@ class EventType(models.Model):
         abstract = True
 
 class EventTypeDefault(EventType):
+    """Default category for event types"""
     pass
 
 class EventTypeProyect(EventType):
+    """Proyect specific category for event types"""
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
 
-
-class Event(Authorable, Permalinkable,Timestampable):
+class Event(Point,Timestampable):
     """Model representing a Proyect."""
-    name = models.CharField(
-        max_length=200,
-        unique=True,
-        help_text=_("Enter an Event Name here")
-    )
-    type = models.ForeignKey(EventTypeProyect, on_delete=models.RESTRICT)
-    description = models.TextField(help_text=_(
-        "Enter a proyect description"), null=True, blank=True)
-    active = models.BooleanField(default=False)
-    tags = TaggableManager()
-
     url_name = "event"
+    type = models.ForeignKey(EventTypeProyect, on_delete=models.RESTRICT)
 
     def __str__(self):
         return str(self.name)
@@ -252,7 +263,7 @@ class Event(Authorable, Permalinkable,Timestampable):
         ]
 
 
-class EventImage(Timestampable):
+class EventImage(models.Model):
     """Event Image Model Database"""
     class ImageTypes(models.TextChoices):
         """ENUM representing a Marine Biome WWF"""
@@ -268,3 +279,70 @@ class EventImage(Timestampable):
         """Meta Ordering"""
         ordering = ['modified_date']
         get_latest_by = 'modified_date'
+
+class InterestType(models.Model):
+    """Model representing an abstract Point of interest Type."""
+    name = models.CharField(
+        max_length=50,
+        unique=True,
+        help_text=_("Enter a point of interest Type here")
+    )
+    file = models.ImageField()
+    class Meta:
+        """Constraints"""
+        abstract = True
+
+class InterestTypeDefault(InterestType):
+    """Default category for point of interest types"""
+    pass
+
+class InterestTypeProyect(InterestType):
+    """Proyect specific category for point of interest types"""
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+
+class Interest(Point):
+    """Model representing a point of interest."""
+    url_name = "interest"
+    type = models.ForeignKey(InterestTypeProyect, on_delete=models.RESTRICT)
+
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        """Constraints"""
+        constraints = [
+            UniqueConstraint(
+                Lower('slug'),
+                name='interest_slug_case_insensitive_unique',
+                violation_error_message=_(
+                    "Point of interest slug already exists (case insensitive match)")
+            ),
+        ]
+
+
+class InterestImage(models.Model):
+    """Event Image Model Database"""
+    class ImageTypes(models.TextChoices):
+        """ENUM representing a Marine Biome WWF"""
+        HEAD = 'hi', 'Head Image'
+        STOCK = 'st', 'Stock Image'
+        EVENT = 'ev', 'Event Image'
+
+    point = models.ForeignKey(Interest, on_delete=models.CASCADE)
+    type = models.TextField(max_length=2, choices=ImageTypes.choices, default='ev')
+    file = models.ImageField()
+
+    class Meta:
+        """Meta Ordering"""
+        ordering = ['modified_date']
+        get_latest_by = 'modified_date'
+
+
+class SubscribedUser(models.Model):
+    """Suscribed Users for newsletter"""
+    name = models.CharField(max_length=100)
+    email = models.CharField(max_length=100,primary_key=True, unique=True,help_text=_("Email address for newsletter signup"))
+    added_date = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return str(self.email)
